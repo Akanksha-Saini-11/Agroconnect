@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────────────────────────── */
+:root {
+  /* 🎨 1. Design System Colors */
+  --primary: #16a34a;
+  --primary-soft: #22c55e;
+  --accent: #0ea5e9;
+  --bg-main: #0b1220;
+  --bg-card: #111827;
+  --bg-soft: #1f2937;
+  --border: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --success: #22c55e;
+  --error: #ef4444;
+
+  /* 📏 Spacing System */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+
+  /* 🔤 Typography System */
+  --fs-page-title: 24px;
+  --fs-section-title: 18px;
+  --fs-card-title: 16px;
+  --fs-body: 14px;
+  --fs-caption: 12px;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --sidebar-w: 272px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { font-size: 14px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-size: var(--fs-body);
+}
+
+button { cursor: pointer; font-family: inherit; transition: all 0.2s ease; }
+select { font-family: inherit; }
+input  { font-family: inherit; }
+
+/* ─────────────────────────────────────────────────────────────
+   APP LAYOUT
+ ───────────────────────────────────────────────────────────── */
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-main);
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin-left: var(--sidebar-w);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--bg-main);
+}
+
+.app.sidebar-closed .app-main {
+  margin-left: 0;
+}
+
+.app-body {
+  flex: 1;
+  padding: var(--space-xl) var(--space-2xl);
+  overflow-y: auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL STATES
+───────────────────────────────────────────────────────────── */
+.global-loading-bar {
+  height: 2px;
+  background: var(--primary);
+  animation: shimmer 1.2s infinite;
+  margin-bottom: var(--space-lg);
+  border-radius: var(--radius-sm);
+}
+
+.global-notice {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--text-secondary);
+  font-size: var(--fs-caption);
+  margin-bottom: var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.85); opacity: 0.5; }
+  60%  { opacity: 0.2; }
+  100% { transform: scale(1.05); opacity: 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .crop-info-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .topbar-center { display: none; }
+  .topbar { padding: 0 16px; }
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay { display: block; }
+  .sidebar-close { display: block; }
+
+  .app-main { margin-left: 0 !important; }
+
+  .app-body { padding: 16px; }
+
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .crop-info-grid { grid-template-columns: 1fr 1fr; }
+
+  .ai-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .ai-fetch-btn { width: 100%; justify-content: center; }
+
+  .topbar-right .tab-group { display: none; }
+  .crop-info-hero { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .stats-row { grid-template-columns: 1fr; }
+  .crop-info-grid { grid-template-columns: 1fr; }
+  .bar-label { min-width: 80px; max-width: 80px; }
+  .topbar-right { display: none; }
+}
+/* ─────────────────────────────────────────────────────────────
+   GPS NEARBY MANDIS
+───────────────────────────────────────────────────────────── */
+
+/* Nearby button in topbar */
+.nearby-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nearby-btn:hover:not(:disabled) {
+  border-color: #2e7d32;
+  color: #2e7d32;
+  background: #f0f7f0;
+}
+.nearby-btn.nearby-active {
+  background: #2e7d32;
+  color: #fff;
+  border-color: #2e7d32;
+}
+.nearby-btn.nearby-locating {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Distance badge on mandi cards */
+.distance-badge {
+  font-size: 12px;
+  color: #2e7d32;
+  font-weight: 500;
+  margin-top: 3px;
+}
+
+/* Nearest mandi card highlight */
+.price-card-nearest {
+  border-color: #2e7d32 !important;
+  background: linear-gradient(135deg, #f0f7f0 0%, #fff 100%);
+}
+
+.nearest-badge {
+  background: #2e7d32 !important;
+  color: #fff !important;
+}
+
+/* Distance label in chart view */
+.bar-distance {
+  font-size: 11px;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+

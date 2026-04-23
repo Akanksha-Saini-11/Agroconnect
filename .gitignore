@@ -1,0 +1,25 @@
+# Dependency directories
+node_modules/
+agroconnect-frontend/node_modules/
+agroconnect-backend/node_modules/
+
+# Environment variables
+.env
+agroconnect-backend/.env
+
+# Build outputs
+agroconnect-frontend/build/
+agroconnect-frontend/dist/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Local logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
