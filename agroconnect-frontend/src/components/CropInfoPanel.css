@@ -1,4 +1,4 @@
-   CROP INFO PANEL
+ /*  CROP INFO PANEL
 ───────────────────────────────────────────────────────────── */
 .crop-info-panel {
   display: flex;
@@ -99,4 +99,4 @@
 
 .crop-info-note strong { color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
 .note-icon { flex-shrink: 0; }
-
+
