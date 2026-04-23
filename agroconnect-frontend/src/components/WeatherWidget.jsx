@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./WeatherWidget.css";
 import {
   fetchWeather,
@@ -55,7 +55,7 @@ export default function WeatherWidget({ onWeatherChange }) {
   const [showCityPrompt, setShowCityPrompt] = useState(null);
 
   // Load by city name (Manual Dropdown)
-  const loadWeatherByCity = async (city) => {
+  const loadWeatherByCity = useCallback(async (city) => {
     setLoading(true);
     setError("");
     setForecast([]);
@@ -78,10 +78,10 @@ export default function WeatherWidget({ onWeatherChange }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onWeatherChange]);
 
   // Load by GPS coords (Smart Cached)
-  const loadWeatherByCoords = async (lat, lon) => {
+  const loadWeatherByCoords = useCallback(async (lat, lon) => {
     setLoading(true);
     setError("");
     setForecast([]);
@@ -139,7 +139,7 @@ export default function WeatherWidget({ onWeatherChange }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onWeatherChange]);
 
   // On mount: ALWAYS try GPS silently first
   useEffect(() => {
@@ -153,7 +153,7 @@ export default function WeatherWidget({ onWeatherChange }) {
         // GPS denied or failed
         setShowCityPrompt(true);
       });
-  }, []);
+  }, [loadWeatherByCoords]);
 
   // Manual city select from dropdown
   const handleCityChange = (city) => {
@@ -162,7 +162,6 @@ export default function WeatherWidget({ onWeatherChange }) {
     loadWeatherByCity(city);
   };
 
-  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
 
   // 📍 button — re-attempt GPS manually
   const handleGeolocate = async () => {

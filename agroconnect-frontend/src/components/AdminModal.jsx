@@ -1,5 +1,5 @@
 //adminmodal.jsx
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import districts from "../constants/stateDistricts";
 import "./AdminModal.css";
@@ -88,22 +88,7 @@ export default function AdminModal({ onClose, onDataChanged }) {
       return true;
     });
   }, [mandis, search, selectedState, selectedCrop, selectedDistrict]);
-  useEffect(() => {
-    if (token) verifyToken();
-  }, []);
-
-  useEffect(() => {
-    if (isLoggedIn) fetchMandis();
-  }, [isLoggedIn]);
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
-
-  const verifyToken = async () => {
+  const verifyToken = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE}/admin/auth/verify`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -114,7 +99,37 @@ export default function AdminModal({ onClose, onDataChanged }) {
       localStorage.removeItem("adminToken");
       setToken(null);
     }
-  };
+  }, [token]);
+
+  const fetchMandis = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get(`${API_BASE}/admin/mandis`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data.success) {
+        setMandis(res.data.data);
+      }
+    } catch (err) {
+      console.error("Fetch mandis failed:", err);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (token) verifyToken();
+  }, [token, verifyToken]);
+
+  useEffect(() => {
+    if (isLoggedIn) fetchMandis();
+  }, [isLoggedIn, fetchMandis]);
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(""), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -153,16 +168,6 @@ export default function AdminModal({ onClose, onDataChanged }) {
     }
   };
 
-  const fetchMandis = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/admin/mandis`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setMandis(res.data.data);
-    } catch (err) {
-      console.error("Error fetching mandis:", err);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -73,15 +73,14 @@ export default function AdminDashboard() {
   }, []);
 
   const verifyToken = useCallback(async () => {
-    const currentToken = localStorage.getItem("adminToken");
-    if (!currentToken) {
+    if (!token) {
       handleLogout();
       return;
     }
 
     try {
       const res = await axios.get(`${API_BASE}/admin/auth/verify`, {
-        headers: { Authorization: `Bearer ${currentToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setIsLoggedIn(true);
       setAdminName(res.data.admin.name);
@@ -89,37 +88,36 @@ export default function AdminDashboard() {
       console.error("Token verification failed:", err);
       handleLogout();
     }
-  }, [handleLogout]);
+  }, [handleLogout, token]);
 
   const fetchMandis = useCallback(async () => {
-    const currentToken = localStorage.getItem("adminToken");
-    if (!currentToken) {
+    if (!token) {
       handleLogout();
       return;
     }
 
     try {
       const res = await axios.get(`${API_BASE}/admin/mandis`, {
-        headers: { Authorization: `Bearer ${currentToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setMandis(res.data.data || []);
-    } catch (e) {
-      console.error("Error fetching mandis:", e);
-      if (e.response?.status === 401 || e.response?.status === 403) {
-        handleLogout();
+
+      if (res.data.success) {
+        setMandis(res.data.data);
       } else {
         setMessage("❌ Error fetching mandis");
       }
+    } catch (err) {
+      console.error("Fetch mandis failed:", err);
+      setMessage("❌ Error fetching mandis");
     }
-  }, [handleLogout]);
+  }, [handleLogout, token]);
 
   /* VERIFY TOKEN ON MOUNT */
   useEffect(() => {
-    const activeToken = localStorage.getItem("adminToken");
-    if (activeToken) {
+    if (token) {
       verifyToken();
     }
-  }, [verifyToken]);
+  }, [token, verifyToken]);
 
   useEffect(() => {
     if (message) {
