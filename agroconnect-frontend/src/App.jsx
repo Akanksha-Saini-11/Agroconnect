@@ -15,10 +15,11 @@ import "./components/EmptyState.css";
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 // Helper: Check if cache is still valid
-const isCacheValid = (timestamp) => {
-  if (!timestamp) return false;
-  return Date.now() - timestamp < CACHE_TTL_MS;
-};
+// eslint-disable-next-line no-unused-vars
+// const isCacheValid = (timestamp) => {
+//   if (!timestamp) return false;
+//   return Date.now() - timestamp < CACHE_TTL_MS;
+// };
 
 // Helper: Get cache key
 const getCacheKey = (crop, state) => {
