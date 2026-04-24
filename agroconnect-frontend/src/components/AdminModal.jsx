@@ -5,7 +5,7 @@ import districts from "../constants/stateDistricts";
 import "./AdminModal.css";
 import StrictSelect from "./ui/StrictSelect";
 
-const API_BASE = `${process.env.REACT_APP_API_URL}/api`;
+const API_BASE = `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api`;
 
 const INDIAN_STATES = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
