@@ -7,7 +7,7 @@ const router = express.Router();
 
 const RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070";
 const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 500; // Optimized: Fetch maximum records in a single call
 const MAX_RECORDS = 500;
 
 const normalize = (v) =>
