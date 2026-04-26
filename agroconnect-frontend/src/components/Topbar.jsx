@@ -143,7 +143,7 @@ export default function Topbar({
               🌾 Crop Info
             </button>
 
-            {hasResults && (
+            {selectedCrop && (
               <button
                 className={`tab ${activeTab === "ai" ? "tab-active" : ""}`}
                 onClick={() => onTabChange("ai")}

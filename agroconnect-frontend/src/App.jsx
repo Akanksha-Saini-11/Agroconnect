@@ -62,6 +62,12 @@ function MainApp() {
     setError("");
     setActiveTab("prices");
     setNearbyMode(false);
+    
+    // Auto-close sidebar on mobile after selection
+    if (window.innerWidth < 1025) {
+      setSidebarOpen(false);
+    }
+
     setTimeout(handleFetchPrices, 50);
   };
 
@@ -219,6 +225,7 @@ function MainApp() {
             setNearbyMode(true);
             setTotal(data.total);
             setBestMandi(data.bestMandi);
+            setActiveTab("prices");
           } else {
              setLocationError("No mandis found for this crop.");
           }

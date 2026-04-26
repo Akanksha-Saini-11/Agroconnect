@@ -3,7 +3,24 @@
 .price-panel { 
   display: flex; 
   flex-direction: column; 
-  gap: var(--space-2xl); 
+  gap: var(--space-lg); 
+}
+
+.price-dashboard-crop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: -10px;
+  margin-bottom: -15px;
+}
+
+.pd-crop-icon { font-size: 28px; filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.3)); }
+.pd-crop-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.2px;
 }
 
 /* Stats row */
@@ -11,6 +28,21 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-lg);
+}
+
+@media (max-width: 1200px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-value {
+    font-size: 1.25rem; /* Slightly smaller for mobile */
+  }
 }
 
 .stat-card {
@@ -26,19 +58,28 @@
 }
 
 .stat-label {
-  font-size: var(--fs-caption);
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  margin-bottom: var(--space-xs);
+  letter-spacing: 1px;
+  color: var(--primary-soft);
+  margin-bottom: 8px;
+  opacity: 0.9;
 }
 
 .stat-value {
   font-size: var(--fs-page-title);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
+}
+
+.mandi-distance-tag {
+  color: var(--primary);
+  font-weight: 700;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .stat-sub {
@@ -53,6 +94,18 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .panel-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .panel-controls-right {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .results-label {
@@ -117,9 +170,22 @@
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   transition: all 0.2s;
   position: relative;
+}
+
+@media (max-width: 600px) {
+  .price-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+  .price-card-right {
+    text-align: left;
+  }
+  .price-card-date {
+    order: -1;
+  }
 }
 
 .price-card:hover {

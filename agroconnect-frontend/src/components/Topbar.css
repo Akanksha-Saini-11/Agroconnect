@@ -4,15 +4,16 @@
 .topbar {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  height: 64px;
-  padding: 0 var(--space-xl);
+  min-height: 64px;
+  padding: var(--space-sm) var(--space-xl);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   position: sticky;
   top: 0;
   z-index: 50;
+  flex-wrap: wrap;
 }
 
 /* ---------------- HAMBURGER ---------------- */
@@ -49,21 +50,43 @@
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 .topbar-left {
-  flex: 1;
+  flex: 1 1 auto;
 }
 
 .topbar-center {
-  flex: 2;
+  flex: 2 1 auto;
   justify-content: center;
 }
 
 .topbar-right {
-  flex: 1;
+  flex: 1 1 auto;
   justify-content: flex-end;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+    padding: var(--space-md);
+  }
+
+  .topbar-left, .topbar-center, .topbar-right {
+    flex: none;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .topbar-center {
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-md);
+  }
 }
 
 /* ---------------- CROP PILL ---------------- */

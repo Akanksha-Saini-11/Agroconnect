@@ -18,6 +18,12 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .ai-header {
+    padding: var(--space-lg);
+  }
 }
 
 .ai-header-left {
@@ -144,6 +150,11 @@
   border-radius: var(--radius-lg);
   font-size: var(--fs-body);
   line-height: 1.6;
+}
+@media (max-width: 600px) {
+  .chat-bubble {
+    max-width: 95%;
+  }
 }
 
 .chat-bubble.assistant {

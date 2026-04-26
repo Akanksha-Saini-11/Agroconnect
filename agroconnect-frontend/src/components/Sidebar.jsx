@@ -10,8 +10,9 @@ export default function Sidebar({ open, onClose, selectedCrop, onCropSelect, onW
     <>
       {open && <div className="sidebar-overlay" onClick={onClose} />}
 
-      <aside className={`sidebar ${open ? "open" : "closed"}`}>
-        <div className="sidebar-header">
+        <aside className={`sidebar ${open ? "open" : "closed"}`}>
+          <button className="sidebar-mobile-close" onClick={onClose}>×</button>
+          <div className="sidebar-header">
           <div className="sidebar-logo">
             <span className="logo-leaf">🌱</span>
             <div>

@@ -1,6 +1,6 @@
-// PricePanel.jsx
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList } from "recharts";
+import { formatDisplayText } from "../utils/formatText";
 import "./PricePanel.css";
 
 const SORT_OPTIONS = [
@@ -94,22 +94,28 @@ export default function PricePanel({
 
   return (
     <div className="price-panel">
+      {/* ---------- CROP HEADER ---------- */}
+      <div className="price-dashboard-crop">
+        <span className="pd-crop-icon">{selectedCrop?.icon}</span>
+        <span className="pd-crop-name">{selectedCrop?.name}</span>
+      </div>
+
       {/* ---------- STATS ---------- */}
       <div className="stats-row">
         {nearbyMode && nearestMandi ? (
           <StatCard
             label="Nearest Mandi"
-            value={nearestMandi.mandi}
+            value={formatDisplayText(nearestMandi.mandi)}
             sub={`${nearestMandi.distance} km away · ₹${nearestMandi.modalPrice}/qtl`}
             accent
           />
         ) : (
           <StatCard
             label="Best Mandi"
-            value={bestMandi?.mandi || "—"}
+            value={formatDisplayText(bestMandi?.mandi) || "—"}
             sub={
               bestMandi
-                ? `${bestMandi.district}, ${bestMandi.state}`
+                ? `${formatDisplayText(bestMandi.district)}, ${formatDisplayText(bestMandi.state)}`
                 : "No data"
             }
             accent
@@ -131,7 +137,7 @@ export default function PricePanel({
         <StatCard
           label="Price Range"
           value={`₹${minPrice} – ₹${maxPrice}`}
-          sub={selectedState || "All India"}
+          sub={formatDisplayText(selectedState) || "All India"}
         />
       </div>
 
@@ -154,7 +160,7 @@ export default function PricePanel({
                 {selectedCrop && (
                   <>
                     {" "}
-                    for <strong>{selectedCrop.name}</strong>
+                    for <strong>{formatDisplayText(selectedCrop.name)}</strong>
                   </>
                 )}
               </>
@@ -202,11 +208,16 @@ export default function PricePanel({
               <div key={i} className="price-card">
                 <div className="price-card-left">
                   <div className="price-card-mandi">
-                    {item.mandi}
+                    {formatDisplayText(item.mandi)}
                   </div>
                   <div className="price-card-meta">
-                    📍 {item.district}, {item.state}
-                    {item.variety ? ` · ${item.variety}` : ""}
+                    📍 {formatDisplayText(item.district)}, {formatDisplayText(item.state)}
+                    {item.variety ? ` · ${formatDisplayText(item.variety)}` : ""}
+                    {nearbyMode && item.distance != null && (
+                      <span className="mandi-distance-tag">
+                        {" "}· 🚀 {item.distance} km
+                      </span>
+                    )}
                   </div>
                 </div>
 

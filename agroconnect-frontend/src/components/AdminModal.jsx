@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import districts from "../constants/stateDistricts";
+import { formatDisplayText } from "../utils/formatText";
 import "./AdminModal.css";
 import StrictSelect from "./ui/StrictSelect";
 
@@ -532,12 +533,12 @@ export default function AdminModal({ onClose, onDataChanged }) {
                       <tbody>
                         {filteredMandis.map((m) => (
                           <tr key={m._id}>
-                            <td>{m.mandi}</td>
-                            <td>{m.state}</td>
-                            <td>{m.district}</td>
-                            <td>{m.crop}</td>
-                            <td>{m.variety  || "—"}</td>
-                            <td>{m.grade    || "—"}</td>
+                            <td>{formatDisplayText(m.mandi)}</td>
+                            <td>{formatDisplayText(m.state)}</td>
+                            <td>{formatDisplayText(m.district)}</td>
+                            <td>{formatDisplayText(m.crop)}</td>
+                            <td>{formatDisplayText(m.variety)  || "—"}</td>
+                            <td>{formatDisplayText(m.grade)    || "—"}</td>
                             <td>{m.minPrice != null ? m.minPrice.toLocaleString("en-IN") : "—"}</td>
                             <td>{m.modalPrice.toLocaleString("en-IN")}</td>
                             <td>{m.maxPrice != null ? m.maxPrice.toLocaleString("en-IN") : "—"}</td>

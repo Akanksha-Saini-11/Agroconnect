@@ -37,7 +37,8 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --sidebar-w: 272px;
+  --sidebar-w: 280px;
+  --sidebar-offset: var(--sidebar-w);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -78,13 +79,14 @@ input  { font-family: inherit; }
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin-left: var(--sidebar-w);
+  margin-left: var(--sidebar-offset);
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--bg-main);
+  min-width: 0; /* Prevent overflow */
 }
 
 .app.sidebar-closed .app-main {
-  margin-left: 0;
+  --sidebar-offset: 0px;
 }
 
 .app-body {
@@ -136,41 +138,64 @@ input  { font-family: inherit; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   RESPONSIVE
+   RESPONSIVE (Unified & Clean)
 ───────────────────────────────────────────────────────────── */
-@media (max-width: 1100px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .crop-info-grid { grid-template-columns: repeat(2, 1fr); }
-}
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-offset: 0px;
+  }
+  
+  .app-body {
+    padding: var(--space-lg);
+  }
 
-@media (max-width: 900px) {
-  .topbar-center { display: none; }
-  .topbar { padding: 0 16px; }
+  .stats-row { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
 }
 
 @media (max-width: 768px) {
-  .sidebar-overlay { display: block; }
-  .sidebar-close { display: block; }
+  .topbar {
+    height: auto;
+    min-height: 64px;
+    padding: var(--space-md);
+  }
 
-  .app-main { margin-left: 0 !important; }
+  .stats-row { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  
+  .crop-info-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+  }
 
-  .app-body { padding: 16px; }
+  .ai-header { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: var(--space-md); 
+  }
+  
+  .ai-fetch-btn { 
+    width: 100%; 
+    justify-content: center; 
+  }
 
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .crop-info-grid { grid-template-columns: 1fr 1fr; }
-
-  .ai-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .ai-fetch-btn { width: 100%; justify-content: center; }
-
-  .topbar-right .tab-group { display: none; }
-  .crop-info-hero { flex-direction: column; text-align: center; }
+  .crop-info-hero { 
+    flex-direction: column; 
+    text-align: center; 
+    padding: var(--space-2xl) var(--space-lg);
+  }
 }
 
-@media (max-width: 480px) {
-  .stats-row { grid-template-columns: 1fr; }
-  .crop-info-grid { grid-template-columns: 1fr; }
-  .bar-label { min-width: 80px; max-width: 80px; }
-  .topbar-right { display: none; }
+@media (max-width: 600px) {
+  .topbar-right {
+    display: none;
+  }
+  
+  .global-notice {
+    font-size: 11px;
+    padding: var(--space-sm);
+  }
 }
 /* ─────────────────────────────────────────────────────────────
    GPS NEARBY MANDIS

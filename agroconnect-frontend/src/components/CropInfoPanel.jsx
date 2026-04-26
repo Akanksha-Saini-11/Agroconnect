@@ -1,4 +1,5 @@
 //cropInfoPanel.jsx
+import { formatDisplayText } from "../utils/formatText";
 import "./CropInfoPanel.css";
 export default function CropInfoPanel({ crop }) {
   if (!crop) return null;
@@ -16,16 +17,18 @@ export default function CropInfoPanel({ crop }) {
     <div className="crop-info-panel">
       {/* Hero */}
       <div className="crop-info-hero">
-        <div className="crop-info-icon-wrap">
-          <span className="crop-info-big-icon">{crop.icon}</span>
+        <div className="crop-info-hero-top">
+          <div className="crop-info-icon-wrap">
+            <span className="crop-info-big-icon">{crop.icon}</span>
+          </div>
+          <div className="crop-info-hero-text">
+            <h2 className="crop-info-name">{formatDisplayText(crop.name)}</h2>
+            <p className="crop-info-category">{formatDisplayText(crop.category)}</p>
+          </div>
         </div>
-        <div className="crop-info-hero-text">
-          <h2 className="crop-info-name">{crop.name}</h2>
-          <p className="crop-info-category">{crop.category}</p>
-          <p className="crop-info-states">
-            <span className="states-label">Major growing states · </span>
-            {crop.states}
-          </p>
+        <div className="crop-info-states">
+          <span className="states-label">Major growing states · </span>
+          {formatDisplayText(crop.states)}
         </div>
       </div>
 

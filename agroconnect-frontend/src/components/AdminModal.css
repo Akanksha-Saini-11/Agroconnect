@@ -23,6 +23,13 @@
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
 }
 
+@media (max-width: 1024px) {
+  .admin-modal {
+    max-height: 95vh;
+    max-width: 95vw;
+  }
+}
+
 .admin-modal-header {
   display: flex;
   align-items: center;
@@ -84,6 +91,18 @@
   flex: 1;
   padding: var(--space-2xl);
   background: var(--bg-main);
+}
+
+@media (max-width: 768px) {
+  .admin-modal-body {
+    padding: var(--space-lg);
+  }
+  .admin-modal-header {
+    padding: var(--space-lg);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
 }
 
 /* Auth */
@@ -275,9 +294,26 @@ td {
   color: var(--text-secondary);
   padding: var(--space-md);
   border-bottom: 1px solid var(--border);
+  background: var(--bg-card); /* Solid background for sticky visibility */
+}
+
+/* 🏆 Sticky First Column for Usability */
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: var(--bg-card);
+  border-right: 2px solid var(--border);
+}
+
+th:first-child {
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4); 
 }
 
 tr:hover td { background: var(--bg-soft); color: var(--text-primary); }
+tr:hover td:first-child { background: var(--bg-soft); }
 
 .edit-btn {
   background: var(--bg-soft);
