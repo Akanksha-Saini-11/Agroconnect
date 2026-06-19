@@ -1,10 +1,23 @@
 /* Footer.css */
 .agroconnect-footer {
   background: var(--bg-card);
-  border-top: 1px solid var(--border);
+  border-top: none;
   padding: 48px var(--space-xl) 24px;
-  margin-top: auto; /* Push to bottom of flex container */
   color: var(--text-secondary);
+  position: relative;
+  width: 100%;
+}
+
+/* Gradient accent line at the top */
+.agroconnect-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-soft, #4ade80), var(--primary));
+  opacity: 0.7;
 }
 
 .footer-container {

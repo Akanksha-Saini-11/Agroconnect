@@ -271,6 +271,7 @@ function MainApp() {
   const hasResults = prices.length > 0;
 
   return (
+    <>
     <div className={`app ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
       <Sidebar
         open={sidebarOpen}
@@ -359,10 +360,11 @@ function MainApp() {
             />
           )}
         </main>
-
-        <Footer language={language} onTabChange={setActiveTab} />
       </div>
     </div>
+
+    <Footer language={language} onTabChange={setActiveTab} />
+    </>
   );
 }
 

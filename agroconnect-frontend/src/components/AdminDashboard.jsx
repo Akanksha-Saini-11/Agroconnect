@@ -457,6 +457,7 @@ export default function AdminDashboard() {
 
   /* ====== DASHBOARD UI ====== */
   return (
+    <>
     <div className="admin-dashboard">
       {/* HEADER */}
       <div className="admin-header">
@@ -740,9 +741,10 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
-
-      <Footer language={language} />
     </div>
+
+    <Footer language={language} />
+    </>
   );
 }
 
