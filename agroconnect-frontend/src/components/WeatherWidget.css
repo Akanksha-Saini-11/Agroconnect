@@ -7,7 +7,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  /* overflow: hidden; removed to allow city select dropdown to show */
   transition: all 0.4s;
 }
 
@@ -71,6 +71,7 @@
 .weather-main {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-md);
   margin-bottom: var(--space-sm);
 }
@@ -93,6 +94,7 @@
   font-size: var(--fs-body);
   font-weight: 600;
   color: var(--text-primary);
+  text-align: center;
 }
 
 .weather-desc {
@@ -100,6 +102,7 @@
   color: var(--text-muted);
   text-transform: capitalize;
   margin-bottom: var(--space-md);
+  text-align: center;
 }
 
 .weather-stats {

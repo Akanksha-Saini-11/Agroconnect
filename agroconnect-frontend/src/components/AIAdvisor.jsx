@@ -3,9 +3,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { sendChatMessage } from "../api/priceApi";
+import { formatBilingualText, t } from "../utils/translations";
 import "./AIAdvisor.css";
 
-export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
+export default function AIAdvisor({ crop, weather, state, prices, bestMandi, language }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,14 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
   }, [messages, loading]);
 
   // Suggested questions
-  const SUGGESTIONS = [
+  const SUGGESTIONS = language === "hi" ? [
+    "क्या मुझे अभी बेचना चाहिए या इंतजार करना चाहिए?",
+    "कौन सी मंडी सबसे अच्छा भाव दे रही है?",
+    "इस फसल के लिए कौन सा कीटनाशक सही है?",
+    "मौसम भाव को कैसे प्रभावित कर रहा है?",
+    "मुझे फसल की कटाई कब करनी चाहिए?",
+    "कटाई के बाद भंडारण कैसे करें?",
+  ] : [
     "Should I sell now or wait?",
     "Which mandi gives best price?",
     "What pesticide for this crop?",
@@ -42,6 +50,8 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
     state,
     prices: prices?.slice(0, 10),
     bestMandi,
+    languagePreference: language === "hi" ? "Hindi" : "English",
+    instruction: `IMPORTANT: Respond ONLY in ${language === "hi" ? "Hindi (Devanagari script)" : "Professional English"}. If the user asks in a different language, switch to that language but prefer ${language === "hi" ? "Hindi" : "English"} by default.`
   });
 
   const sendMessage = async (text) => {
@@ -148,17 +158,17 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
         <div className="ai-header-left">
           <span className="ai-icon">🤖</span>
           <div>
-            <h2 className="ai-title">AI Crop Advisor</h2>
+            <h2 className="ai-title">{t("aiAdvisor", language)}</h2>
             <p className="ai-sub">
-              Ask anything · {crop?.name}
-              {state ? ` in ${state}` : " · All India"}
+              {language === "hi" ? "कुछ भी पूछें" : "Ask anything"} · {formatBilingualText(crop?.name, language, "crop")}
+              {state ? ` ${language === "hi" ? "में" : "in"} ${formatBilingualText(state, language, "state")}` : ` · ${t("allIndia", language)}`}
             </p>
           </div>
         </div>
 
         {messages.length > 0 && (
           <button className="ai-clear-btn" onClick={clearChat}>
-            🗑️ Clear
+            🗑️ {language === "hi" ? "साफ़ करें" : "Clear"}
           </button>
         )}
       </div>
@@ -167,23 +177,23 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
       <div className="ai-context">
         {weather && (
           <span className="context-chip">
-            🌤️ {weather.temp}°C · {weather.city}
+            🌤️ {weather.temp}°C · {formatBilingualText(weather.city, language, "city")}
           </span>
         )}
 
         {prices?.length > 0 && (
-          <span className="context-chip">📊 {prices.length} mandis</span>
+          <span className="context-chip">📊 {prices.length} {t("mandis", language)}</span>
         )}
 
         {bestMandi && (
           <span className="context-chip">
-            ⭐ ₹{bestMandi.modalPrice} at {bestMandi.mandi}
+            ⭐ ₹{bestMandi.modalPrice} {t("at", language)} {formatBilingualText(bestMandi.mandi, language)}
           </span>
         )}
 
         <span className="context-chip">
           📅{" "}
-          {new Date().toLocaleDateString("en-IN", {
+          {new Date().toLocaleDateString(language === "hi" ? "hi-IN" : "en-IN", {
             month: "long",
             year: "numeric",
           })}
@@ -197,12 +207,13 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
             <div className="chat-welcome-icon">🌾</div>
 
             <p className="chat-welcome-title">
-              Namaste! How can I help you today?
+              {language === "hi" ? "नमस्ते! मैं आपकी क्या सहायता कर सकता हूँ?" : "Namaste! How can I help you today?"}
             </p>
 
             <p className="chat-welcome-sub">
-              Ask me anything about {crop?.name || "your crop"} — prices,
-              selling timing, pesticides, harvesting, weather impact, and more.
+              {language === "hi" 
+                ? `${formatBilingualText(crop?.name, language, "crop") || "अपनी फसल"} के बारे में कुछ भी पूछें - भाव, बिक्री का समय, कीटनाशक, कटाई, मौसम का प्रभाव और बहुत कुछ।`
+                : `Ask me anything about ${crop?.name || "your crop"} — prices, selling timing, pesticides, harvesting, weather impact, and more.`}
             </p>
 
             <div className="chat-suggestions">
@@ -266,7 +277,9 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
       {/* Disclaimer */}
       {messages.length > 0 && (
         <div className="ai-disclaimer">
-          ⚠️ AI-generated advice. Always verify with local market experts.
+          ⚠️ {language === "hi" 
+            ? "एआई-जनित सलाह। हमेशा स्थानीय बाजार विशेषज्ञों के साथ सत्यापन करें।" 
+            : "AI-generated advice. Always verify with local market experts."}
         </div>
       )}
 
@@ -275,7 +288,7 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi }) {
         <textarea
           ref={inputRef}
           className="chat-input"
-          placeholder="Koi bhi sawaal poochhen... (Ask anything)"
+          placeholder={language === "hi" ? "कुछ भी पूछें..." : "Ask anything..."}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}

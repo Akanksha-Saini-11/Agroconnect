@@ -334,3 +334,55 @@
     padding: 0 var(--space-lg);
   }
 }
+
+/* Sticky first column for Admin Dashboard mandis-table */
+.mandis-table th:first-child,
+.mandis-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background: var(--bg-card);
+  border-right: 2px solid var(--border);
+}
+
+.mandis-table th:first-child {
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4); 
+}
+
+.mandis-table tr:hover td:first-child { 
+  background: var(--bg-soft); 
+}
+
+/* Language Toggle styling for Admin header */
+.admin-header .language-toggle {
+  display: flex;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+  margin-right: var(--space-lg);
+}
+
+.admin-header .lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-header .lang-btn:hover {
+  color: var(--text-primary);
+}
+
+.admin-header .lang-btn.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

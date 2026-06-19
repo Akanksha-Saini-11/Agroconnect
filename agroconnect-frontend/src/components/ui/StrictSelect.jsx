@@ -15,7 +15,14 @@ export default function StrictSelect({ value, onChange, options, placeholder, di
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const displayValue = value || placeholder;
+  const selectedOption = options.find(opt => {
+    if (typeof opt === 'string') return opt === value;
+    return opt.value === value;
+  });
+
+  const displayValue = selectedOption 
+    ? (typeof selectedOption === 'string' ? selectedOption : selectedOption.label)
+    : placeholder;
 
   return (
     <div className={`strict-select-container ${className || ""}`} ref={containerRef}>
@@ -33,15 +40,19 @@ export default function StrictSelect({ value, onChange, options, placeholder, di
               {placeholder}
             </li>
           )}
-          {options.map((opt) => (
-            <li 
-              key={opt} 
-              className={value === opt ? "selected" : ""}
-              onClick={() => { onChange(opt); setIsOpen(false); }}
-            >
-              {opt}
-            </li>
-          ))}
+          {options.map((opt) => {
+            const val = typeof opt === 'string' ? opt : opt.value;
+            const lbl = typeof opt === 'string' ? opt : opt.label;
+            return (
+              <li 
+                key={val} 
+                className={value === val ? "selected" : ""}
+                onClick={() => { onChange(val); setIsOpen(false); }}
+              >
+                {lbl}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

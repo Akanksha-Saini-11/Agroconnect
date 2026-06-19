@@ -8,6 +8,7 @@ import AIAdvisor from "./components/AIAdvisor";
 import { fetchPrices } from "./api/priceApi";
 import { getDistance, getDistrictCoords } from "./constants/districtCoords";
 import AdminDashboard from "./components/AdminDashboard";
+import { t, formatBilingualText } from "./utils/translations";
 import "./App.css";
 import "./components/EmptyState.css";
 
@@ -39,6 +40,15 @@ function MainApp() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("prices");
   const [fromCache, setFromCache] = useState(false);
+  
+  // 🌐 Language State (Persisted)
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem("agroconnect_lang") || "en";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("agroconnect_lang", language);
+  }, [language]);
 
   // Cross-tab real-time update listener
   useEffect(() => {
@@ -138,7 +148,7 @@ function MainApp() {
       console.log("✅ Updated localStorage cache with fresh data");
     } catch (err) {
       console.error("Fetch error:", err);
-      setError("Could not connect to server. Is the backend running?");
+      setError(language === "hi" ? "सर्वर से कनेक्ट नहीं हो सका। कृपया बाद में प्रयास करें।" : "Could not connect to server. Is the backend running?");
     } finally {
       setLoading(false);
     }
@@ -151,9 +161,9 @@ function MainApp() {
       // 1. Normalize schema and casing
       const mandi = {
         ...mandiRaw,
-        state: mandiRaw.state?.toLowerCase().trim() || "",
-        district: mandiRaw.district?.toLowerCase().trim() || "",
-        mandi: mandiRaw.mandi?.toLowerCase().trim() || "",
+        state: mandiRaw.state || "",
+        district: mandiRaw.district || "",
+        mandi: mandiRaw.mandi || "",
         lat: mandiRaw.lat || null,
         lng: mandiRaw.lng || null,
         source: mandiRaw.source || "gov"
@@ -196,7 +206,7 @@ function MainApp() {
 
   const handleLocate = async () => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation not supported by your browser.");
+      setLocationError(language === "hi" ? "आपका ब्राउज़र लोकेशन का समर्थन नहीं करता है।" : "Geolocation not supported by your browser.");
       return;
     }
 
@@ -227,11 +237,11 @@ function MainApp() {
             setBestMandi(data.bestMandi);
             setActiveTab("prices");
           } else {
-             setLocationError("No mandis found for this crop.");
+             setLocationError(language === "hi" ? "इस फसल के लिए कोई मंडी नहीं मिली।" : "No mandis found for this crop.");
           }
         } catch (err) {
           console.error("Error fetching All India data for Near Me:", err);
-          setLocationError("Could not fetch nearby mandis.");
+          setLocationError(language === "hi" ? "निकटतम मंडियों को लोड नहीं किया जा सका।" : "Could not fetch nearby mandis.");
         } finally {
           setLocating(false);
         }
@@ -239,9 +249,9 @@ function MainApp() {
       (err) => {
         setLocating(false);
         if (err.code === 1) {
-          setLocationError("Location access denied. Please allow location.");
+          setLocationError(language === "hi" ? "लोकेशन एक्सेस अस्वीकार कर दिया गया। कृपया परमिशन दें।" : "Location access denied. Please allow location.");
         } else {
-          setLocationError("Could not get your location. Try again.");
+          setLocationError(language === "hi" ? "आपकी लोकेशन नहीं मिल सकी। पुनः प्रयास करें।" : "Could not get your location. Try again.");
         }
       },
       { timeout: 8000 }
@@ -268,6 +278,8 @@ function MainApp() {
         onCropSelect={handleCropSelect}
         onWeatherChange={setWeather}
         onDataChanged={handleFetchPrices}
+        language={language}
+        onLanguageChange={setLanguage}
       />
 
       <div className="app-main">
@@ -287,6 +299,7 @@ function MainApp() {
           locating={locating}
           nearbyMode={nearbyMode}
           hasLocation={!!userLocation}
+          language={language}
         />
 
         <main className="app-body">
@@ -306,13 +319,15 @@ function MainApp() {
 
           {fromCache && (
             <div className="global-notice" style={{ opacity: 0.7 }}>
-              <span>💾</span> Showing cached data (updated every 5 minutes)
+              <span>💾</span> {t("loading", language)}
             </div>
           )}
 
           {activeTab === "prices" && (
             <>
-              {hasResults ? (
+              {loading && !hasResults ? (
+                <LoadingState language={language} />
+              ) : hasResults ? (
                 <PricePanel
                   prices={prices}
                   bestMandi={bestMandi}
@@ -320,15 +335,16 @@ function MainApp() {
                   selectedState={selectedState}
                   total={total}
                   nearbyMode={nearbyMode}
+                  language={language}
                 />
               ) : (
-                !loading && <EmptyState crop={selectedCrop} />
+                <EmptyState crop={selectedCrop} language={language} />
               )}
             </>
           )}
 
           {activeTab === "info" && selectedCrop && (
-            <CropInfoPanel crop={selectedCrop} />
+            <CropInfoPanel crop={selectedCrop} language={language} />
           )}
 
           {activeTab === "ai" && selectedCrop && (
@@ -338,6 +354,7 @@ function MainApp() {
               state={selectedState}
               prices={prices}
               bestMandi={bestMandi}
+              language={language}
             />
           )}
         </main>
@@ -346,7 +363,32 @@ function MainApp() {
   );
 }
 
-function EmptyState({ crop }) {
+function LoadingState({ language }) {
+  return (
+    <div className="loading-state">
+      <div className="loading-spinner-wrap">
+        <div className="loading-spinner"></div>
+        <div className="loading-spinner-inner">🌾</div>
+      </div>
+      <h3 className="loading-title">
+        {language === "hi" ? "नवीनतम मंडी दरें खोजी जा रही हैं..." : "Fetching latest mandi rates..."}
+      </h3>
+      <p className="loading-subtitle">
+        {language === "hi" 
+          ? "हम आपके लिए विभिन्न मंडियों से वास्तविक समय के भाव प्राप्त कर रहे हैं।" 
+          : "Connecting to agriculture servers for real-time prices."}
+      </p>
+      
+      <div className="skeleton-grid">
+        <div className="skeleton-card"></div>
+        <div className="skeleton-card"></div>
+        <div className="skeleton-card"></div>
+      </div>
+    </div>
+  );
+}
+
+function EmptyState({ crop, language }) {
   return (
     <div className="empty-state">
       <div className="empty-illustration">
@@ -358,16 +400,21 @@ function EmptyState({ crop }) {
         </div>
       </div>
       <h2 className="empty-title">
-        {crop ? `Ready to fetch ${crop.name} prices` : "Select a crop to begin"}
+        {crop 
+          ? (language === "hi" ? `${formatBilingualText(crop.name, language, "crop")} भाव देखने के लिए तैयार` : `Ready to fetch ${crop.name} prices`)
+          : (language === "hi" ? "शुरू करने के लिए एक फसल चुनें" : "Select a crop to begin")}
       </h2>
       <p className="empty-sub">
         {crop
-          ? `Choose a state (or All India) and click "Get Prices" to see live mandi data.`
-          : "Pick any crop from the sidebar — cereals, vegetables, fruits, and more."}
+          ? (language === "hi" ? "कोई राज्य (या अखिल भारतीय) चुनें और लाइव मंडी डेटा देखने के लिए 'भाव देखें' पर क्लिक करें।" : `Choose a state (or All India) and click "Get Prices" to see live mandi data.`)
+          : (language === "hi" ? "साइडबार से कोई भी फसल चुनें — अनाज, सब्जियां, फल और बहुत कुछ।" : "Pick any crop from the sidebar — cereals, vegetables, fruits, and more.")}
       </p>
       {!crop && (
         <div className="empty-categories">
-          {["🌾 Cereals", "🥬 Vegetables", "🍌 Fruits", "🌻 Oilseeds", "🫘 Pulses", "🌶️ Spices"].map((c) => (
+          {(language === "hi" 
+            ? ["🌾 अनाज", "🥬 सब्जियां", "🍌 फल", "🌻 तिलहन", "🫘 दालें", "🌶️ मसाले"] 
+            : ["🌾 Cereals", "🥬 Vegetables", "🍌 Fruits", "🌻 Oilseeds", "🫘 Pulses", "🌶️ Spices"]
+          ).map((c) => (
             <span key={c} className="empty-category-chip">
               {c}
             </span>

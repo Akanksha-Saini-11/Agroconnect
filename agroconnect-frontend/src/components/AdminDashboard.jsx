@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import districts from "../constants/stateDistricts";
 import { CROPS } from "../constants/crops";
+import { t, formatBilingualText } from "../utils/translations";
 import {
   BarChart,
   Bar,
@@ -46,6 +47,9 @@ const EMPTY_FORM = {
 
 
 export default function AdminDashboard() {
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem("agroconnect_lang") || "en";
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [adminName, setAdminName] = useState("");
   const [token, setToken] = useState(localStorage.getItem("adminToken"));
@@ -161,7 +165,7 @@ export default function AdminDashboard() {
       setEmail("");
       setPassword("");
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Login failed");
+      setAuthError(err.response?.data?.message || (language === "hi" ? "लॉगिन विफल" : "Login failed"));
     } finally {
       setLoading(false);
     }
@@ -182,14 +186,14 @@ export default function AdminDashboard() {
 
       // Use an inline state or a custom alert, here we can repurpose authError to show a success message but styled green,
       // Wait, there's no success state for auth. I will just set authError but with a success prefix.
-      setAuthError("✅ Registration successful! Please login.");
+      setAuthError(language === "hi" ? "✅ पंजीकरण सफल! कृपया लॉगिन करें।" : "✅ Registration successful! Please login.");
       setAuthMode("login");
       setEmail("");
       setPassword("");
       setName("");
       setSecretCode("");
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Registration failed");
+      setAuthError(err.response?.data?.message || (language === "hi" ? "पंजीकरण विफल" : "Registration failed"));
     } finally {
       setLoading(false);
     }
@@ -386,27 +390,27 @@ export default function AdminDashboard() {
     return (
       <div className="admin-auth-container">
         <div className="auth-card">
-          <h1>AgroConnect Admin</h1>
+          <h1>{language === "hi" ? "AgroConnect एडमिन" : "AgroConnect Admin"}</h1>
 
           <div className="auth-tabs">
             <button
               onClick={() => setAuthMode("login")}
               className={`tab ${authMode === "login" ? "active" : ""}`}
             >
-              Login
+              {language === "hi" ? "लॉगिन" : "Login"}
             </button>
             <button
               onClick={() => setAuthMode("register")}
               className={`tab ${authMode === "register" ? "active" : ""}`}
             >
-              Register
+              {language === "hi" ? "रजिस्टर" : "Register"}
             </button>
           </div>
 
           <form onSubmit={authMode === "login" ? handleLogin : handleRegister} className="auth-form">
             {authMode === "register" && (
               <input
-                placeholder="Full Name"
+                placeholder={language === "hi" ? "पूरा नाम" : "Full Name"}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -415,7 +419,7 @@ export default function AdminDashboard() {
 
             <input
               type="email"
-              placeholder="Email"
+              placeholder={language === "hi" ? "ईमेल" : "Email"}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -423,7 +427,7 @@ export default function AdminDashboard() {
 
             <input
               type="password"
-              placeholder="Password"
+              placeholder={language === "hi" ? "पासवर्ड" : "Password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -432,7 +436,7 @@ export default function AdminDashboard() {
             {authMode === "register" && (
               <input
                 type="password"
-                placeholder="Secret Code"
+                placeholder={language === "hi" ? "गुप्त कोड (Secret Code)" : "Secret Code"}
                 value={secretCode}
                 onChange={(e) => setSecretCode(e.target.value)}
                 required
@@ -440,7 +444,7 @@ export default function AdminDashboard() {
             )}
 
             <button type="submit" disabled={loading}>
-              {loading ? "Processing..." : authMode === "login" ? "Login" : "Register"}
+              {loading ? (language === "hi" ? "प्रसंस्करण..." : "Processing...") : authMode === "login" ? (language === "hi" ? "लॉगिन" : "Login") : (language === "hi" ? "रजिस्टर" : "Register")}
             </button>
           </form>
 
@@ -455,11 +459,34 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       {/* HEADER */}
       <div className="admin-header">
-        <h1>Admin Dashboard</h1>
+        <h1>{language === "hi" ? "एडमिन डैशबोर्ड" : "Admin Dashboard"}</h1>
         <div className="admin-info">
-          <span>Welcome, <strong>{adminName}</strong></span>
+          {/* Language Toggle */}
+          <div className="language-toggle">
+            <button 
+              type="button"
+              className={`lang-btn ${language === "en" ? "active" : ""}`}
+              onClick={() => {
+                setLanguage("en");
+                localStorage.setItem("agroconnect_lang", "en");
+              }}
+            >
+              English
+            </button>
+            <button 
+              type="button"
+              className={`lang-btn ${language === "hi" ? "active" : ""}`}
+              onClick={() => {
+                setLanguage("hi");
+                localStorage.setItem("agroconnect_lang", "hi");
+              }}
+            >
+              हिंदी
+            </button>
+          </div>
+          <span>{t("welcome", language)}, <strong>{adminName}</strong></span>
           <button onClick={handleLogout} className="logout-btn">
-            Logout
+            {t("logout", language)}
           </button>
         </div>
       </div>
@@ -468,11 +495,11 @@ export default function AdminDashboard() {
       <div className="admin-content">
         {/* FORM SECTION */}
         <div className="form-section">
-          <h2>{editingId ? "Edit Mandi" : "Add Mandi"}</h2>
+          <h2>{editingId ? (language === "hi" ? "मंडी बदलें" : "Edit Mandi") : (language === "hi" ? "नई मंडी जोड़ें" : "Add Mandi")}</h2>
 
           <form onSubmit={handleSubmit} className="mandi-form">
             <input
-              placeholder="Mandi Name"
+              placeholder={t("mandiName", language)}
               value={formData.mandi}
               onChange={(e) => setFormData({ ...formData, mandi: e.target.value })}
               required
@@ -483,9 +510,9 @@ export default function AdminDashboard() {
               onChange={(e) => setFormData({ ...formData, state: e.target.value, district: "" })}
               required
             >
-              <option value="">Select State</option>
+              <option value="">{t("selectState", language)}</option>
               {INDIAN_STATES.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>{formatBilingualText(s, language, "state")}</option>
               ))}
             </select>
 
@@ -495,12 +522,12 @@ export default function AdminDashboard() {
               required
               disabled={!formData.state}
             >
-              <option value="">{formData.state ? "Select District" : "Select State First"}</option>
+              <option value="">{formData.state ? (language === "hi" ? "जिला चुनें" : "Select District") : t("selectStateFirst", language)}</option>
               {(districts[formData.state] || []).map((d) => (
-                <option key={d} value={d}>{d}</option>
+                <option key={d} value={d}>{formatBilingualText(d, language)}</option>
               ))}
               {formData.district && !(districts[formData.state] || []).some(d => d.toLowerCase().trim() === formData.district.toLowerCase().trim()) && (
-                <option value={formData.district}>{formData.district} (Update Required)</option>
+                <option value={formData.district}>{formatBilingualText(formData.district, language)} ({language === "hi" ? "सुधार आवश्यक" : "Update Required"})</option>
               )}
             </select>
 
@@ -509,14 +536,14 @@ export default function AdminDashboard() {
               onChange={(e) => setFormData({ ...formData, crop: e.target.value })}
               required
             >
-              <option value="">Select Crop</option>
+              <option value="">{t("selectCrop", language)}</option>
               {CROPS.map((c) => (
-                <option key={c.apiName} value={c.apiName}>{c.name}</option>
+                <option key={c.apiName} value={c.apiName}>{formatBilingualText(c.name, language, "crop")}</option>
               ))}
             </select>
 
             <input
-              placeholder="Variety"
+              placeholder={t("variety", language)}
               value={formData.variety}
               onChange={(e) => setFormData({ ...formData, variety: e.target.value })}
             />
@@ -525,22 +552,22 @@ export default function AdminDashboard() {
               value={formData.grade}
               onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
             >
-              <option value="">Select Grade</option>
+              <option value="">{t("grade", language)}</option>
               {GRADES.map((g) => (
-                <option key={g} value={g}>{g}</option>
+                <option key={g} value={g}>{formatBilingualText(g, language, "grade")}</option>
               ))}
             </select>
 
             <input
               type="number"
-              placeholder="Min Price (₹)"
+              placeholder={`${t("minPriceShort", language)} (₹)`}
               value={formData.minPrice}
               onChange={(e) => setFormData({ ...formData, minPrice: e.target.value })}
             />
 
             <input
               type="number"
-              placeholder="Modal Price (₹)"
+              placeholder={`${t("modalPriceShort", language)} (₹)`}
               value={formData.modalPrice}
               onChange={(e) => setFormData({ ...formData, modalPrice: e.target.value })}
               required
@@ -548,21 +575,21 @@ export default function AdminDashboard() {
 
             <input
               type="number"
-              placeholder="Max Price (₹)"
+              placeholder={`${t("maxPriceShort", language)} (₹)`}
               value={formData.maxPrice}
               onChange={(e) => setFormData({ ...formData, maxPrice: e.target.value })}
             />
 
             <input
               type="number"
-              placeholder="Arrival Quantity (quintals)"
+              placeholder={t("arrivalQuantity", language)}
               value={formData.arrivalQuantity}
               onChange={(e) => setFormData({ ...formData, arrivalQuantity: e.target.value })}
             />
 
             <div className="form-actions" style={{ gridColumn: "1 / -1", display: "flex", gap: "12px" }}>
               <button type="submit" disabled={loading} style={{ flex: 1 }}>
-                {loading ? "Saving..." : editingId ? "Update Mandi" : "Add Mandi"}
+                {loading ? t("loading", language) : editingId ? t("saveMandi", language) : t("addNewMandi", language)}
               </button>
 
               {editingId && (
@@ -576,7 +603,7 @@ export default function AdminDashboard() {
                   className="cancel-btn"
                   style={{ flex: 1 }}
                 >
-                  Cancel
+                  {t("cancel", language)}
                 </button>
               )}
             </div>
@@ -592,11 +619,11 @@ export default function AdminDashboard() {
         {/* TABLE SECTION */}
         <div className="mandis-section">
           <div className="section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-            <h2>My Mandis ({filteredMandis.length})</h2>
+            <h2>{t("myMandis", language)} ({filteredMandis.length})</h2>
             
             <div className="view-toggle">
-              <button className={`view-btn ${view === "cards" ? "view-active" : ""}`} onClick={() => setView("cards")}>Table</button>
-              <button className={`view-btn ${view === "chart" ? "view-active" : ""}`} onClick={() => setView("chart")}>Analytics</button>
+              <button className={`view-btn ${view === "cards" ? "view-active" : ""}`} onClick={() => setView("cards")}>{t("table", language)}</button>
+              <button className={`view-btn ${view === "chart" ? "view-active" : ""}`} onClick={() => setView("chart")}>{t("analytics", language)}</button>
             </div>
           </div>
 
@@ -608,9 +635,9 @@ export default function AdminDashboard() {
                 setSelectedDistrict("");
               }}
             >
-              <option value="">All States</option>
+              <option value="">{t("allStates", language)}</option>
               {INDIAN_STATES.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>{formatBilingualText(s, language, "state")}</option>
               ))}
             </select>
             
@@ -618,9 +645,9 @@ export default function AdminDashboard() {
               value={filterCrop}
               onChange={(e) => setFilterCrop(e.target.value)}
             >
-              <option value="">All Crops</option>
+              <option value="">{t("allCrops", language)}</option>
               {CROPS.map((c) => (
-                <option key={c.apiName} value={c.apiName}>{c.name}</option>
+                <option key={c.apiName} value={c.apiName}>{formatBilingualText(c.name, language, "crop")}</option>
               ))}
             </select>
             
@@ -629,14 +656,14 @@ export default function AdminDashboard() {
               onChange={(e) => setSelectedDistrict(e.target.value)}
               disabled={!selectedState}
             >
-              <option value="">{selectedState ? "All Districts" : "Select State First"}</option>
+              <option value="">{selectedState ? t("allDistricts", language) : t("selectStateFirst", language)}</option>
               {(districts[selectedState] || []).map((d) => (
-                <option key={d} value={d}>{d}</option>
+                <option key={d} value={d}>{formatBilingualText(d, language)}</option>
               ))}
             </select>
 
             <input
-              placeholder="Search mandi, variety..."
+              placeholder={t("searchMandi", language)}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -648,45 +675,51 @@ export default function AdminDashboard() {
                 <table>
                   <thead>
                     <tr>
-                      <th>Mandi</th>
-                      <th>Location</th>
-                      <th>Crop</th>
-                      <th>Variety</th>
-                      <th>Prices (Min/Modal/Max)</th>
-                      <th>Qty</th>
-                      <th>Actions</th>
+                      <th>{t("mandiName", language)}</th>
+                      <th>{t("location", language)}</th>
+                      <th>{t("crop", language)}</th>
+                      <th>{t("variety", language)}</th>
+                      <th>{t("pricesMinModalMax", language)}</th>
+                      <th>{t("qty", language)}</th>
+                      <th>{t("actions", language)}</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     {filteredMandis.map((m) => (
                       <tr key={m._id}>
-                        <td>{m.mandi}</td>
+                        <td>{formatBilingualText(m.mandi, language)}</td>
                         <td>
-                          <div style={{ color: "var(--text-primary)" }}>{m.district}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{m.state}</div>
+                          <div style={{ color: "var(--text-primary)" }}>{formatBilingualText(m.district, language)}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>{formatBilingualText(m.state, language, "state")}</div>
                         </td>
-                        <td>{m.crop}</td>
+                        <td>{formatBilingualText(m.crop, language, "crop")}</td>
                         <td>
-                          {m.variety || "—"}
-                          {m.grade && <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>Grade: {m.grade}</div>}
+                          {formatBilingualText(m.variety, language) || "—"}
+                          {m.grade && (
+                            <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                              {t("grade", language)}: {formatBilingualText(m.grade, language, "grade")}
+                            </div>
+                          )}
                         </td>
                         <td>
-                          <div style={{ fontWeight: "600", color: "var(--primary)" }}>₹{m.modalPrice}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>₹{m.minPrice || "—"} - ₹{m.maxPrice || "—"}</div>
+                          <div style={{ fontWeight: "600", color: "var(--primary)" }}>₹{m.modalPrice.toLocaleString("en-IN")}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                            ₹{m.minPrice != null ? m.minPrice.toLocaleString("en-IN") : "—"} - ₹{m.maxPrice != null ? m.maxPrice.toLocaleString("en-IN") : "—"}
+                          </div>
                         </td>
-                        <td>{m.arrivalQuantity != null ? `${m.arrivalQuantity} qtl` : "—"}</td>
+                        <td>{m.arrivalQuantity != null ? `${m.arrivalQuantity.toLocaleString("en-IN")} ${t("qtl", language)}` : "—"}</td>
                         <td>
                           <div style={{ display: "flex", gap: "8px" }}>
                             {deleteConfirmId === m._id ? (
                               <>
-                                <button onClick={() => executeDelete(m)} className="delete-btn" style={{ background: "var(--error)", color: "white" }}>Confirm</button>
-                                <button onClick={() => setDeleteConfirmId(null)} className="edit-btn">No</button>
+                                <button onClick={() => executeDelete(m)} className="delete-btn" style={{ background: "var(--error)", color: "white" }}>{t("confirm", language)}</button>
+                                <button onClick={() => setDeleteConfirmId(null)} className="edit-btn">{t("no", language)}</button>
                               </>
                             ) : (
                               <>
-                                <button onClick={() => handleEdit(m)} className="edit-btn">Edit</button>
-                                <button onClick={() => setDeleteConfirmId(m._id)} className="delete-btn">Delete</button>
+                                <button onClick={() => handleEdit(m)} className="edit-btn">{t("edit", language)}</button>
+                                <button onClick={() => setDeleteConfirmId(m._id)} className="delete-btn">{t("delete", language)}</button>
                               </>
                             )}
                           </div>
@@ -700,7 +733,9 @@ export default function AdminDashboard() {
               <PriceChart data={filteredMandis} />
             )
           ) : (
-            <p style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>No mandis found matching filters.</p>
+            <p style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>
+              {language === "hi" ? "फिल्टर से मेल खाने वाली कोई मंडी नहीं मिली।" : "No mandis found matching filters."}
+            </p>
           )}
         </div>
       </div>

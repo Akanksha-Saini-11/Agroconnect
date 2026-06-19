@@ -106,10 +106,10 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
   .crop-info-grid {
-    grid-template-columns: repeat(2, 1fr); /* Stay 2-col as requested for space efficiency */
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }
 

@@ -262,6 +262,22 @@
   gap: var(--space-md);
 }
 
+@media (max-width: 600px) {
+  .bar-chart-panel {
+    display: none; /* Hide graph on mobile for cleaner UX */
+  }
+  .view-toggle {
+    display: none; /* Hide view toggle if graph is hidden */
+  }
+  .pd-crop-icon {
+    font-size: 36px; /* Bigger icon on mobile */
+  }
+  .view-btn {
+    padding: 12px 16px; /* Bigger touch target */
+    font-size: 16px;
+  }
+}
+
 .bar-row {
   display: flex;
   align-items: center;

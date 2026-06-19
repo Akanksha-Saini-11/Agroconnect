@@ -4,6 +4,8 @@ import { CROPS, CROP_CATEGORIES } from "../constants/crops";
 import { useState, useMemo } from "react";
 import "./Topbar.css";
 
+import { formatBilingualText, t } from "../utils/translations";
+
 export default function Topbar({
   sidebarOpen,
   onToggleSidebar,
@@ -19,6 +21,7 @@ export default function Topbar({
   onLocate,
   locating,
   nearbyMode,
+  language,
 }) {
 
   const categories = Object.values(CROP_CATEGORIES);
@@ -52,11 +55,11 @@ export default function Topbar({
             onCropSelect(null);
           }}
         >
-          <option value="">Select Category</option>
+          <option value="">{t("selectCategory", language)}</option>
 
           {categories.map((cat) => (
             <option key={cat} value={cat}>
-              {cat}
+              {formatBilingualText(cat, language, "category")}
             </option>
           ))}
         </select>
@@ -73,11 +76,11 @@ export default function Topbar({
             onCropSelect(crop);
           }}
         >
-          <option value="">Select Crop</option>
+          <option value="">{t("selectCrop", language)}</option>
 
           {filteredCrops.map((crop) => (
             <option key={crop.name} value={crop.name}>
-              {crop.icon} {crop.name}
+              {crop.icon} {formatBilingualText(crop.name, language, "crop")}
             </option>
           ))}
         </select>
@@ -90,17 +93,17 @@ export default function Topbar({
           value={selectedState}
           onChange={(e) => onStateChange(e.target.value)}
         >
-          <option value="">All India</option>
+          <option value="">{t("allIndia", language)}</option>
 
-          <optgroup label="Major Agri States">
+          <optgroup label={language === "hi" ? "प्रमुख कृषि राज्य" : "Major Agri States"}>
             {AGRI_STATES.map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>{formatBilingualText(s, language, "state")}</option>
             ))}
           </optgroup>
 
-          <optgroup label="All States & UTs">
+          <optgroup label={language === "hi" ? "सभी राज्य और केंद्र शासित प्रदेश" : "All States & UTs"}>
             {STATES.filter((s) => !AGRI_STATES.includes(s)).map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s}>{formatBilingualText(s, language, "state")}</option>
             ))}
           </optgroup>
         </select>
@@ -110,7 +113,7 @@ export default function Topbar({
           onClick={onFetchPrices}
           disabled={!selectedCrop || loading}
         >
-          {loading ? "Loading..." : "Get Prices →"}
+          {loading ? t("loading", language) : `${t("getPrices", language)} →`}
         </button>
 
         {hasResults && (
@@ -119,7 +122,7 @@ export default function Topbar({
             onClick={onLocate}
             disabled={locating}
           >
-            {locating ? "…" : nearbyMode ? "📍 Nearest" : "📍 Near Me"}
+            {locating ? "…" : nearbyMode ? `📍 ${t("nearestMandi", language)}` : `📍 ${t("nearMe", language)}`}
           </button>
         )}
       </div>
@@ -133,14 +136,14 @@ export default function Topbar({
               className={`tab ${activeTab === "prices" ? "tab-active" : ""}`}
               onClick={() => onTabChange("prices")}
             >
-              📊 Prices
+              📊 {t("prices", language)}
             </button>
 
             <button
               className={`tab ${activeTab === "info" ? "tab-active" : ""}`}
               onClick={() => onTabChange("info")}
             >
-              🌾 Crop Info
+              🌾 {t("cropInfo", language)}
             </button>
 
             {selectedCrop && (
@@ -148,7 +151,7 @@ export default function Topbar({
                 className={`tab ${activeTab === "ai" ? "tab-active" : ""}`}
                 onClick={() => onTabChange("ai")}
               >
-                🤖 AI Advisor
+                🤖 {t("aiAdvisor", language)}
               </button>
             )}
 

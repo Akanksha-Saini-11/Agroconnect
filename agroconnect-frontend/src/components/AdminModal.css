@@ -331,4 +331,24 @@ tr:hover td:first-child { background: var(--bg-soft); }
   padding: 6px 12px;
   border-radius: var(--radius-sm);
   cursor: pointer;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  grid-column: 1 / -1;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .form-row-2, .form-row-3 {
+    grid-template-columns: 1fr;
+  }
 }

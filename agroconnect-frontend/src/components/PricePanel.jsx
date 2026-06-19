@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList } from "recharts";
-import { formatDisplayText } from "../utils/formatText";
+import { formatBilingualText, t } from "../utils/translations";
 import "./PricePanel.css";
 
-const SORT_OPTIONS = [
-  { value: "price-desc", label: "Price: High → Low" },
-  { value: "price-asc", label: "Price: Low → High" },
-  { value: "distance", label: "Nearest First" },
-  { value: "state", label: "By State" },
-  { value: "district", label: "By District" },
+const SORT_OPTIONS = (language) => [
+  { value: "price-desc", label: language === "hi" ? "भाव: उच्च → कम" : "Price: High → Low" },
+  { value: "price-asc", label: language === "hi" ? "भाव: कम → उच्च" : "Price: Low → High" },
+  { value: "distance", label: language === "hi" ? "निकटतम पहले" : "Nearest First" },
+  { value: "state", label: language === "hi" ? "राज्य के अनुसार" : "By State" },
+  { value: "district", label: language === "hi" ? "जिले के अनुसार" : "By District" },
 ];
 
 export default function PricePanel({
@@ -18,6 +18,7 @@ export default function PricePanel({
   selectedState,
   total,
   nearbyMode,
+  language,
 }) {
   const [sort, setSort] = useState("price-desc");
   const [view, setView] = useState("cards");
@@ -27,8 +28,8 @@ export default function PricePanel({
   if (!prices || prices.length === 0) {
     return (
       <div className="price-panel empty-panel">
-        <h3>No price data available</h3>
-        <p>Try selecting another crop or state.</p>
+        <h3>{t("noData", language)}</h3>
+        <p>{t("selectCrop", language)}</p>
       </div>
     );
   }
@@ -97,47 +98,51 @@ export default function PricePanel({
       {/* ---------- CROP HEADER ---------- */}
       <div className="price-dashboard-crop">
         <span className="pd-crop-icon">{selectedCrop?.icon}</span>
-        <span className="pd-crop-name">{selectedCrop?.name}</span>
+        <span className="pd-crop-name">
+          {formatBilingualText(selectedCrop?.name, language, "crop")}
+        </span>
       </div>
 
       {/* ---------- STATS ---------- */}
       <div className="stats-row">
         {nearbyMode && nearestMandi ? (
           <StatCard
-            label="Nearest Mandi"
-            value={formatDisplayText(nearestMandi.mandi)}
-            sub={`${nearestMandi.distance} km away · ₹${nearestMandi.modalPrice}/qtl`}
+            label={t("nearestMandi", language)}
+            value={formatBilingualText(nearestMandi.mandi, language)}
+            sub={`${t("kmAway", language).replace("{dist}", nearestMandi.distance)} · ₹${nearestMandi.modalPrice}/${t("qtl", language)}`}
             accent
           />
         ) : (
           <StatCard
-            label="Best Mandi"
-            value={formatDisplayText(bestMandi?.mandi) || "—"}
+            label={t("bestMandi", language)}
+            value={formatBilingualText(bestMandi?.mandi, language) || "—"}
             sub={
               bestMandi
-                ? `${formatDisplayText(bestMandi.district)}, ${formatDisplayText(bestMandi.state)}`
-                : "No data"
+                ? `${formatBilingualText(bestMandi.district, language)}, ${formatBilingualText(bestMandi.state, language, "state")}`
+                : t("noData", language)
             }
             accent
           />
         )}
 
         <StatCard
-          label="Best Price"
+          label={t("bestPrice", language)}
           value={bestMandi ? `₹${bestMandi.modalPrice}` : "—"}
-          sub={`Modal`}
+          sub={t("modalPrice", language)}
         />
 
         <StatCard
-          label="Avg Price"
+          label={t("avgPrice", language)}
           value={`₹${avgPrice}`}
-          sub={`Across ${prices.length} mandis`}
+          sub={t("showingRecords", language)
+            .replace("{count}", prices.length)
+            .replace("{crop}", "")}
         />
 
         <StatCard
-          label="Price Range"
+          label={t("priceRange", language)}
           value={`₹${minPrice} – ₹${maxPrice}`}
-          sub={formatDisplayText(selectedState) || "All India"}
+          sub={formatBilingualText(selectedState, language, "state") || t("allIndia", language)}
         />
       </div>
 
@@ -147,22 +152,17 @@ export default function PricePanel({
           <span className="results-label">
             {nearbyMode ? (
               <>
-                📍 Sorted by distance ·{" "}
-                Showing top <strong>
-                  {finalDisplayPrices.length}
-                </strong>{" "}
-                nearest mandis
+                📍 {t("sortedBy", language).replace("{type}", t("nearMe", language))} ·{" "}
+                {t("showingRecords", language)
+                  .replace("{count}", finalDisplayPrices.length)
+                  .replace("{crop}", t("nearestMandi", language))}
               </>
             ) : (
               <>
-                Showing <strong>{prices.length}</strong>
-                {total ? ` of ${total}` : ""} records
-                {selectedCrop && (
-                  <>
-                    {" "}
-                    for <strong>{formatDisplayText(selectedCrop.name)}</strong>
-                  </>
-                )}
+                {t("showingRecords", language)
+                  .replace("{count}", prices.length)
+                  .replace("{crop}", formatBilingualText(selectedCrop?.name, language, "crop"))}
+                {total ? ` (${total} total)` : ""}
               </>
             )}
           </span>
@@ -172,14 +172,16 @@ export default function PricePanel({
           {!nearbyMode && (
             <select
               className="sort-select"
-              value={sort}
+              value={effectiveSort}
               onChange={(e) => setSort(e.target.value)}
             >
-              {SORT_OPTIONS.filter((o) => o.value !== "distance").map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
+              {SORT_OPTIONS(language)
+                .filter((o) => o.value !== "distance")
+                .map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
             </select>
           )}
 
@@ -208,14 +210,14 @@ export default function PricePanel({
               <div key={i} className="price-card">
                 <div className="price-card-left">
                   <div className="price-card-mandi">
-                    {formatDisplayText(item.mandi)}
+                    {formatBilingualText(item.mandi, language)}
                   </div>
                   <div className="price-card-meta">
-                    📍 {formatDisplayText(item.district)}, {formatDisplayText(item.state)}
-                    {item.variety ? ` · ${formatDisplayText(item.variety)}` : ""}
+                    📍 {formatBilingualText(item.district, language)}, {formatBilingualText(item.state, language, "state")}
+                    {item.variety ? ` · ${formatBilingualText(item.variety, language)}` : ""}
                     {nearbyMode && item.distance != null && (
                       <span className="mandi-distance-tag">
-                        {" "}· 🚀 {item.distance} km
+                        {" "}· 🚀 {t("kmAway", language).replace("{dist}", item.distance)}
                       </span>
                     )}
                   </div>
@@ -224,7 +226,7 @@ export default function PricePanel({
                 <div className="price-card-right">
                   <div className="price-card-modal">
                     ₹{item.modalPrice}
-                    <span className="price-card-unit">/qtl</span>
+                    <span className="price-card-unit">/{t("qtl", language)}</span>
                   </div>
                 </div>
 
@@ -249,7 +251,9 @@ export default function PricePanel({
                 className="view-btn"
                 onClick={() => setShowAllChart(!showAllChart)}
               >
-                {showAllChart ? "Show Top 20" : `Show All ${finalDisplayPrices.length}`}
+                {showAllChart 
+                  ? (language === "hi" ? "शीर्ष 20 दिखाएं" : "Show Top 20") 
+                  : (language === "hi" ? `सभी ${finalDisplayPrices.length} दिखाएं` : `Show All ${finalDisplayPrices.length}`)}
               </button>
             </div>
           )}
@@ -273,12 +277,18 @@ export default function PricePanel({
                     tick={{ fill: "var(--text-secondary)", fontSize: 10 }}
                     width={160}
                     interval={0}
-                    tickFormatter={(value) => value.length > 25 ? value.substring(0, 22) + "..." : value}
+                    tickFormatter={(value) => {
+                      const translated = formatBilingualText(value, language);
+                      return translated.length > 25 ? translated.substring(0, 22) + "..." : translated;
+                    }}
                   />
                   <Tooltip 
                     contentStyle={{ backgroundColor: "var(--bg-soft)", borderColor: "var(--border)", borderRadius: 8, color: "var(--text-primary)" }}
                     itemStyle={{ color: "var(--primary)" }}
-                    formatter={(value) => [`₹${value}`, "Modal Price"]}
+                    formatter={(value, name, props) => [
+                      `₹${value}`, 
+                      formatBilingualText(props.payload.mandi, language)
+                    ]}
                   />
                   <Bar 
                     dataKey="modalPrice" 

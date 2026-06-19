@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import districts from "../constants/stateDistricts";
-import { formatDisplayText } from "../utils/formatText";
+import { t, formatBilingualText } from "../utils/translations";
 import "./AdminModal.css";
 import StrictSelect from "./ui/StrictSelect";
 
@@ -42,7 +42,7 @@ const EMPTY_FORM = {
   arrivalQuantity: "",
 };
 
-export default function AdminModal({ onClose, onDataChanged }) {
+export default function AdminModal({ onClose, onDataChanged, language }) {
   const [isLoggedIn, setIsLoggedIn]   = useState(false);
   const [adminName, setAdminName]     = useState("");
   const [token, setToken]             = useState(localStorage.getItem("adminToken"));
@@ -145,7 +145,7 @@ export default function AdminModal({ onClose, onDataChanged }) {
       setAdminName(res.data.admin.name);
       setEmail(""); setPassword("");
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Login failed");
+      setAuthError(err.response?.data?.message || (language === "hi" ? "लॉगिन विफल" : "Login failed"));
     } finally {
       setLoading(false);
     }
@@ -159,11 +159,11 @@ export default function AdminModal({ onClose, onDataChanged }) {
       await axios.post(`${API_BASE}/admin/auth/register`, {
         email, password, name, secretCode,
       });
-      alert("Registration successful! Please login.");
+      alert(language === "hi" ? "पंजीकरण सफल! कृपया लॉगिन करें।" : "Registration successful! Please login.");
       setAuthMode("login");
       setEmail(""); setPassword(""); setName(""); setSecretCode("");
     } catch (err) {
-      setAuthError(err.response?.data?.message || "Registration failed");
+      setAuthError(err.response?.data?.message || (language === "hi" ? "पंजीकरण विफल" : "Registration failed"));
     } finally {
       setLoading(false);
     }
@@ -306,11 +306,11 @@ export default function AdminModal({ onClose, onDataChanged }) {
 
         {/* Header */}
         <div className="admin-modal-header">
-          <h2>{isLoggedIn ? "📊 Admin Dashboard" : "🔒 Admin Login"}</h2>
+          <h2>{isLoggedIn ? `📊 ${t("admin", language)}` : `🔒 ${language === "hi" ? "एडमिन लॉगिन" : "Admin Login"}`}</h2>
           <div className="admin-modal-header-right">
             {isLoggedIn && <span className="admin-welcome">👤 {adminName}</span>}
             {isLoggedIn && (
-              <button onClick={handleLogout} className="admin-logout-btn">Logout</button>
+              <button onClick={handleLogout} className="admin-logout-btn">{t("logout", language)}</button>
             )}
             <button onClick={onClose} className="admin-close-btn">✕</button>
           </div>
@@ -325,11 +325,15 @@ export default function AdminModal({ onClose, onDataChanged }) {
                 <button
                   className={authMode === "login" ? "active" : ""}
                   onClick={() => { setAuthMode("login"); setAuthError(""); }}
-                >Login</button>
+                >
+                  {language === "hi" ? "लॉगिन" : "Login"}
+                </button>
                 <button
                   className={authMode === "register" ? "active" : ""}
                   onClick={() => { setAuthMode("register"); setAuthError(""); }}
-                >Register</button>
+                >
+                  {language === "hi" ? "रजिस्टर" : "Register"}
+                </button>
               </div>
 
               <form
@@ -338,26 +342,26 @@ export default function AdminModal({ onClose, onDataChanged }) {
               >
                 {authMode === "register" && (
                   <input
-                    type="text" placeholder="Full Name" value={name}
+                    type="text" placeholder={language === "hi" ? "पूरा नाम" : "Full Name"} value={name}
                     onChange={(e) => setName(e.target.value)} required
                   />
                 )}
                 <input
-                  type="email" placeholder="Email" value={email}
+                  type="email" placeholder={language === "hi" ? "ईमेल" : "Email"} value={email}
                   onChange={(e) => setEmail(e.target.value)} required
                 />
                 <input
-                  type="password" placeholder="Password" value={password}
+                  type="password" placeholder={language === "hi" ? "पासवर्ड" : "Password"} value={password}
                   onChange={(e) => setPassword(e.target.value)} required
                 />
                 {authMode === "register" && (
                   <input
-                    type="password" placeholder="Secret Code" value={secretCode}
+                    type="password" placeholder={language === "hi" ? "गुप्त कोड (Secret Code)" : "Secret Code"} value={secretCode}
                     onChange={(e) => setSecretCode(e.target.value)} required
                   />
                 )}
                 <button type="submit" disabled={loading}>
-                  {loading ? "Processing..." : authMode === "login" ? "Login" : "Register"}
+                  {loading ? (language === "hi" ? "प्रसंस्करण..." : "Processing...") : authMode === "login" ? (language === "hi" ? "लॉगिन" : "Login") : (language === "hi" ? "रजिस्टर" : "Register")}
                 </button>
               </form>
 
@@ -370,12 +374,12 @@ export default function AdminModal({ onClose, onDataChanged }) {
 
               {/* ── FORM ── */}
               <div className="admin-form-section">
-                <h3>{editingId ? "✏️ Edit Mandi" : "➕ Add New Mandi"}</h3>
+                <h3>{editingId ? `✏️ ${t("editMandi", language)}` : `➕ ${t("addNewMandi", language)}`}</h3>
                 <form onSubmit={handleSubmit} className="mandi-form">
 
                   {/* Row 1 — Mandi name */}
                   <input
-                    type="text" placeholder="Mandi Name" value={formData.mandi}
+                    type="text" placeholder={t("mandiName", language)} value={formData.mandi}
                     onChange={(e) => field("mandi", e.target.value)} required
                   />
 
@@ -383,8 +387,8 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   <div className="form-row-2">
                     <StrictSelect
                       value={formData.state}
-                      placeholder="Select State"
-                      options={INDIAN_STATES}
+                      placeholder={t("selectState", language)}
+                      options={INDIAN_STATES.map(s => ({ value: s, label: formatBilingualText(s, language, "state") }))}
                       onChange={(val) => {
                         field("state", val);
                         field("district", "");
@@ -393,8 +397,8 @@ export default function AdminModal({ onClose, onDataChanged }) {
 
                     <StrictSelect
                       value={formData.district}
-                      placeholder={formData.state ? "Select District" : "Select State First"}
-                      options={districts[formData.state] || []}
+                      placeholder={formData.state ? (language === "hi" ? "जिला चुनें" : "Select District") : t("selectStateFirst", language)}
+                      options={(districts[formData.state] || []).map(d => ({ value: d, label: formatBilingualText(d, language) }))}
                       disabled={!formData.state}
                       onChange={(val) => field("district", val)}
                     />
@@ -403,8 +407,8 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   {/* Row 3 — Crop */}
                   <StrictSelect
                     value={formData.crop}
-                    placeholder="Select Crop"
-                    options={CROPS}
+                    placeholder={t("selectCrop", language)}
+                    options={CROPS.map(c => ({ value: c, label: formatBilingualText(c, language, "crop") }))}
                     onChange={(val) => field("crop", val)}
                   />
 
@@ -412,7 +416,7 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   <div className="form-row-2">
                     <input
                       type="text"
-                      placeholder="Variety (e.g. Sharbati, 1121 Basmati)"
+                      placeholder={t("variety", language)}
                       value={formData.variety}
                       onChange={(e) => field("variety", e.target.value)}
                     />
@@ -420,9 +424,11 @@ export default function AdminModal({ onClose, onDataChanged }) {
                       value={formData.grade}
                       onChange={(e) => field("grade", e.target.value)}
                     >
-                      <option value="">Select Grade</option>
+                      <option value="">{t("grade", language)}</option>
                       {GRADES.map((g) => (
-                        <option key={g} value={g}>{g}</option>
+                        <option key={g} value={g}>
+                          {formatBilingualText(g, language, "grade")}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -430,17 +436,17 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   {/* Row 5 — Min / Max / Modal Price */}
                   <div className="form-row-3">
                     <input
-                      type="number" placeholder="Min Price (₹)"
+                      type="number" placeholder={`${t("minPriceShort", language)} (₹)`}
                       value={formData.minPrice} min="0"
                       onChange={(e) => field("minPrice", e.target.value)}
                     />
                     <input
-                      type="number" placeholder="Modal Price (₹)"
+                      type="number" placeholder={`${t("modalPriceShort", language)} (₹)`}
                       value={formData.modalPrice} min="1" required
                       onChange={(e) => field("modalPrice", e.target.value)}
                     />
                     <input
-                      type="number" placeholder="Max Price (₹)"
+                      type="number" placeholder={`${t("maxPriceShort", language)} (₹)`}
                       value={formData.maxPrice} min="0"
                       onChange={(e) => field("maxPrice", e.target.value)}
                     />
@@ -449,7 +455,7 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   {/* Row 6 — Arrival Quantity */}
                   <input
                     type="number"
-                    placeholder="Arrival Quantity (quintals) — optional"
+                    placeholder={t("arrivalQuantity", language)}
                     value={formData.arrivalQuantity} min="0"
                     onChange={(e) => field("arrivalQuantity", e.target.value)}
                   />
@@ -457,14 +463,14 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   {/* Buttons */}
                   <div className="form-btns">
                     <button type="submit" disabled={loading}>
-                      {loading ? "Saving..." : editingId ? "Update Mandi" : "Add Mandi"}
+                      {loading ? `${t("loading", language)}` : editingId ? t("saveMandi", language) : t("addNewMandi", language)}
                     </button>
                     {editingId && (
                       <button
                         type="button" className="cancel-btn"
                         onClick={() => { setEditingId(null); setFormData(EMPTY_FORM); setMessage(""); }}
                       >
-                        Cancel
+                        {t("cancel", language)}
                       </button>
                     )}
                   </div>
@@ -480,14 +486,14 @@ export default function AdminModal({ onClose, onDataChanged }) {
               {/* ── TABLE ── */}
               <div className="admin-table-section">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                  <h3>Added Mandis ({filteredMandis.length})</h3>
+                  <h3>{t("addedMandis", language)} ({filteredMandis.length})</h3>
                 </div>
 
                 <div className="table-header-controls">
                   <StrictSelect
                     value={selectedState}
-                    placeholder="All States"
-                    options={INDIAN_STATES}
+                    placeholder={t("allStates", language)}
+                    options={INDIAN_STATES.map(s => ({ value: s, label: formatBilingualText(s, language, "state") }))}
                     onChange={(val) => {
                       setSelectedState(val);
                       setSelectedDistrict("");
@@ -496,20 +502,20 @@ export default function AdminModal({ onClose, onDataChanged }) {
                   
                   <StrictSelect
                     value={selectedCrop}
-                    placeholder="All Crops"
-                    options={CROPS}
+                    placeholder={t("allCrops", language)}
+                    options={CROPS.map(c => ({ value: c, label: formatBilingualText(c, language, "crop") }))}
                     onChange={(val) => setSelectedCrop(val)}
                   />
                   
                   <StrictSelect
                     value={selectedDistrict}
-                    placeholder={selectedState ? "All Districts" : "Select State First"}
-                    options={districts[selectedState] || []}
+                    placeholder={selectedState ? t("allDistricts", language) : t("selectStateFirst", language)}
+                    options={(districts[selectedState] || []).map(d => ({ value: d, label: formatBilingualText(d, language) }))}
                     disabled={!selectedState}
                     onChange={(val) => setSelectedDistrict(val)}
                   />
 
-                  <input placeholder="Search mandi, variety..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                  <input placeholder={t("searchMandi", language)} value={search} onChange={(e) => setSearch(e.target.value)} />
                 </div>
 
                 {filteredMandis.length > 0 ? (
@@ -517,28 +523,28 @@ export default function AdminModal({ onClose, onDataChanged }) {
                     <table>
                       <thead>
                         <tr>
-                          <th>Mandi</th>
-                          <th>State</th>
-                          <th>District</th>
-                          <th>Crop</th>
-                          <th>Variety</th>
-                          <th>Grade</th>
-                          <th>Min ₹</th>
-                          <th>Modal ₹</th>
-                          <th>Max ₹</th>
-                          <th>Qty (qtl)</th>
-                          <th>Actions</th>
+                          <th>{t("mandiName", language)}</th>
+                          <th>{t("state", language)}</th>
+                          <th>{t("district", language)}</th>
+                          <th>{t("crop", language)}</th>
+                          <th>{t("variety", language)}</th>
+                          <th>{t("grade", language)}</th>
+                          <th>{t("minPriceShort", language)}</th>
+                          <th>{t("modalPriceShort", language)}</th>
+                          <th>{t("maxPriceShort", language)}</th>
+                          <th>{t("qtyShort", language)}</th>
+                          <th>{t("actions", language)}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredMandis.map((m) => (
                           <tr key={m._id}>
-                            <td>{formatDisplayText(m.mandi)}</td>
-                            <td>{formatDisplayText(m.state)}</td>
-                            <td>{formatDisplayText(m.district)}</td>
-                            <td>{formatDisplayText(m.crop)}</td>
-                            <td>{formatDisplayText(m.variety)  || "—"}</td>
-                            <td>{formatDisplayText(m.grade)    || "—"}</td>
+                            <td>{formatBilingualText(m.mandi, language)}</td>
+                            <td>{formatBilingualText(m.state, language, "state")}</td>
+                            <td>{formatBilingualText(m.district, language)}</td>
+                            <td>{formatBilingualText(m.crop, language, "crop")}</td>
+                            <td>{formatBilingualText(m.variety, language)  || "—"}</td>
+                            <td>{formatBilingualText(m.grade, language, "grade")    || "—"}</td>
                             <td>{m.minPrice != null ? m.minPrice.toLocaleString("en-IN") : "—"}</td>
                             <td>{m.modalPrice.toLocaleString("en-IN")}</td>
                             <td>{m.maxPrice != null ? m.maxPrice.toLocaleString("en-IN") : "—"}</td>
@@ -552,19 +558,19 @@ export default function AdminModal({ onClose, onDataChanged }) {
                                       className="delete-btn" 
                                       style={{ backgroundColor: "#d32f2f", color: "white", fontWeight: "600", border: "none", borderRadius: "4px" }}
                                     >
-                                      Confirm
+                                      {t("confirm", language)}
                                     </button>
                                     <button 
                                       onClick={() => setDeleteConfirmId(null)} 
                                       className="cancel-btn"
                                     >
-                                      No
+                                      {t("no", language)}
                                     </button>
                                   </>
                                 ) : (
                                   <>
-                                    <button onClick={() => handleEdit(m)} className="edit-btn">Edit</button>
-                                    <button onClick={() => setDeleteConfirmId(m._id)} className="delete-btn">Delete</button>
+                                    <button onClick={() => handleEdit(m)} className="edit-btn">{t("edit", language)}</button>
+                                    <button onClick={() => setDeleteConfirmId(m._id)} className="delete-btn">{t("delete", language)}</button>
                                   </>
                                 )}
                               </div>
@@ -575,7 +581,7 @@ export default function AdminModal({ onClose, onDataChanged }) {
                     </table>
                   </div>
                 ) : (
-                  <p className="no-data">No mandis added yet</p>
+                  <p className="no-data">{t("noMandisYet", language)}</p>
                 )}
               </div>
 

@@ -153,7 +153,13 @@
 }
 @media (max-width: 600px) {
   .chat-bubble {
-    max-width: 95%;
+    max-width: calc(100% - 48px);
+  }
+  
+  .suggestion-chip {
+    white-space: normal;
+    text-align: center;
+    word-break: break-word;
   }
 }
 
@@ -234,4 +240,18 @@
   font-weight: 600;
   margin: var(--space-md) 0 var(--space-xs);
   color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .ai-advisor {
+    min-height: auto;
+    height: auto;
+  }
+  .chat-area {
+    min-height: 300px;
+    height: 400px;
+  }
+  .chat-input-bar {
+    padding: var(--space-md);
+  }
 }

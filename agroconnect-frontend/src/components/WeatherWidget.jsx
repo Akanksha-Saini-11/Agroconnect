@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import "./WeatherWidget.css";
+import { formatBilingualText, t } from "../utils/translations";
 import {
   fetchWeather,
   fetchWeatherByCoords,
@@ -43,7 +44,7 @@ const WEATHER_BG = {
 const LS_WEATHER_KEY = "agroconnect_weather";
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
 
-export default function WeatherWidget({ onWeatherChange }) {
+export default function WeatherWidget({ onWeatherChange, language }) {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -191,7 +192,7 @@ export default function WeatherWidget({ onWeatherChange }) {
     ? WEATHER_BG[weather.icon] || "weather-default"
     : "weather-default";
     
-  const allCities = CITY_GROUPS.flatMap(group => group.cities.map(c => c.name));
+  const allCities = CITY_GROUPS.flatMap(group => group.cities.map(c => c.name)).sort((a, b) => a.localeCompare(b));
 
   // Still silently trying GPS (brief moment on first load)
   if (showCityPrompt === null) {
@@ -199,7 +200,7 @@ export default function WeatherWidget({ onWeatherChange }) {
       <div className="weather-widget weather-default">
         <div className="weather-locating">
           <span className="weather-locating-icon">📡</span>
-          <p>Detecting your location…</p>
+          <p>{language === "hi" ? "आपकी लोकेशन का पता लगाया जा रहा है..." : "Detecting your location..."}</p>
         </div>
       </div>
     );
@@ -212,8 +213,8 @@ export default function WeatherWidget({ onWeatherChange }) {
         <div className="weather-prompt card-style">
           <div className="prompt-header">
             <span className="weather-prompt-icon">🌤️</span>
-            <p className="weather-prompt-title">Weather Forecast</p>
-            <p className="weather-prompt-sub">Get live updates for your area</p>
+            <p className="weather-prompt-title">{t("weather", language)}</p>
+            <p className="weather-prompt-sub">{language === "hi" ? "अपने क्षेत्र के लिए लाइव अपडेट प्राप्त करें" : "Get live updates for your area"}</p>
           </div>
           
           <div className="prompt-actions">
@@ -223,17 +224,22 @@ export default function WeatherWidget({ onWeatherChange }) {
               className="geo-btn geo-btn-large"
               onClick={handleGeolocate}
             >
-              📍 {error ? "Retry Location Access" : "Use My Location"}
+              📍 {error 
+                  ? (language === "hi" ? "लोकेशन पुनः प्रयास करें" : "Retry Location Access") 
+                  : (language === "hi" ? "मेरी लोकेशन का उपयोग करें" : "Use My Location")}
             </button>
             
             <div className="prompt-divider">
-              <span>OR</span>
+              <span>{language === "hi" ? "या" : "OR"}</span>
             </div>
             
             <StrictSelect
               value={selectedCity}
-              placeholder="Select a city manually"
-              options={allCities}
+              placeholder={language === "hi" ? "मैन्युअल रूप से एक शहर चुनें" : "Select a city manually"}
+              options={allCities.map(city => ({
+                value: city,
+                label: formatBilingualText(city, language, "city")
+              }))}
               onChange={handleCityChange}
               className="large-select"
             />
@@ -249,8 +255,11 @@ export default function WeatherWidget({ onWeatherChange }) {
       <div className="weather-controls">
         <StrictSelect
           value={selectedCity}
-          placeholder="Select City"
-          options={allCities}
+          placeholder={t("selectCity", language)}
+          options={allCities.map(city => ({
+            value: city,
+            label: formatBilingualText(city, language, "city")
+          }))}
           onChange={handleCityChange}
         />
 
@@ -285,24 +294,24 @@ export default function WeatherWidget({ onWeatherChange }) {
             </div>
           </div>
 
-          <div className="weather-city-name">{weather.city}</div>
-          <div className="weather-desc">{weather.description}</div>
+          <div className="weather-city-name">{formatBilingualText(weather.city, language, "city")}</div>
+          <div className="weather-desc">{formatBilingualText(weather.description, language, "weather")}</div>
 
           <div className="weather-stats">
             <div className="weather-stat">
               <span className="wstat-icon">💧</span>
               <span className="wstat-val">{weather.humidity}%</span>
-              <span className="wstat-label">Humidity</span>
+              <span className="wstat-label">{t("humidity", language)}</span>
             </div>
             <div className="weather-stat">
               <span className="wstat-icon">💨</span>
               <span className="wstat-val">{weather.wind}</span>
-              <span className="wstat-label">km/h</span>
+              <span className="wstat-label">{t("wind", language)}</span>
             </div>
             <div className="weather-stat">
               <span className="wstat-icon">🌡️</span>
               <span className="wstat-val">{weather.feelsLike}°</span>
-              <span className="wstat-label">Feels like</span>
+              <span className="wstat-label">{t("feelsLike", language)}</span>
             </div>
           </div>
         </div>
@@ -314,8 +323,8 @@ export default function WeatherWidget({ onWeatherChange }) {
             const d = new Date(day.date * 1000);
             const label =
               i === 0
-                ? "Today"
-                : d.toLocaleDateString("en-IN", { weekday: "short" });
+                ? t("today", language)
+                : d.toLocaleDateString(language === "hi" ? "hi-IN" : "en-IN", { weekday: "short" });
 
             return (
               <div key={i} className="forecast-day">
