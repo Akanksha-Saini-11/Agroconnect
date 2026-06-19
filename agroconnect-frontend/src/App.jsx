@@ -340,7 +340,7 @@ function MainApp() {
                   language={language}
                 />
               ) : (
-                <EmptyState crop={selectedCrop} language={language} />
+                <EmptyState crop={selectedCrop} language={language} onCropSelect={handleCropSelect} />
               )}
             </>
           )}
@@ -393,39 +393,209 @@ function LoadingState({ language }) {
   );
 }
 
-function EmptyState({ crop, language }) {
-  return (
-    <div className="empty-state">
-      <div className="empty-illustration">
-        <span className="empty-crop-icon">{crop ? crop.icon : "🌾"}</span>
-        <div className="empty-rings">
-          <div className="ring ring-1" />
-          <div className="ring ring-2" />
-          <div className="ring ring-3" />
+function EmptyState({ crop, language, onCropSelect }) {
+  if (!crop) {
+    const popularCrops = [
+      { name: "Wheat", icon: "🌾", apiName: "Wheat", category: "Cereals & Millets" },
+      { name: "Rice", icon: "🍚", apiName: "Rice", category: "Cereals & Millets" },
+      { name: "Paddy", icon: "🌿", apiName: "Paddy(Common)", category: "Cereals & Millets" },
+      { name: "Potato", icon: "🥔", apiName: "Potato", category: "Vegetables" },
+      { name: "Tomato", icon: "🍅", apiName: "Tomato", category: "Vegetables" },
+      { name: "Onion", icon: "🧅", apiName: "Onion", category: "Vegetables" },
+      { name: "Mustard", icon: "🌻", apiName: "Mustard", category: "Oilseeds" },
+      { name: "Garlic", icon: "🧄", apiName: "Garlic", category: "Vegetables" },
+      { name: "Chickpea", icon: "🫘", apiName: "Gram", category: "Pulses" },
+      { name: "Mango", icon: "🥭", apiName: "Mango", category: "Fruits" },
+      { name: "Cotton", icon: "☁️", apiName: "Cotton", category: "Cash Crops" },
+      { name: "Sugarcane", icon: "🎋", apiName: "Sugarcane", category: "Cash Crops" },
+    ];
+
+    const stats = [
+      { num: "500+", label: language === "hi" ? "सक्रिय मंडियां" : "Active Mandis", icon: "🏢" },
+      { num: "50+", label: language === "hi" ? "समर्थित फसलें" : "Monitored Crops", icon: "🌾" },
+      { num: "100%", label: language === "hi" ? "सत्यापित डेटा" : "Verified Prices", icon: "✅" },
+      { num: "24/7", label: language === "hi" ? "एआई सहायता" : "AI Consultation", icon: "🤖" },
+    ];
+
+    const features = [
+      {
+        title: language === "hi" ? "लाइव मंडी दरें" : "Live Mandi Prices",
+        desc: language === "hi" ? "विभिन्न राज्यों और जिलों में अपनी उपज के लिए वर्तमान दैनिक भाव देखें।" : "Check real-time market prices across different states and districts for your crop.",
+        icon: "📊"
+      },
+      {
+        title: language === "hi" ? "फसल सलाहकार" : "Crop Advisory",
+        desc: language === "hi" ? "बुवाई से लेकर कटाई तक मौसम के अनुसार आदर्श कृषि पद्धतियों की जानकारी।" : "Access complete cultivation advice, soil guides, and weather-appropriate routines.",
+        icon: "🌾"
+      },
+      {
+        title: language === "hi" ? "एआई सलाहकार" : "AI Consultant",
+        desc: language === "hi" ? "अपनी खेती की समस्याओं, रोगों और कीटों का एआई से त्वरित समाधान पाएं।" : "Consult our intelligent AI engine for instant diagnostics and farming tips.",
+        icon: "🤖"
+      },
+      {
+        title: language === "hi" ? "मौसम और वर्षा" : "Weather Forecast",
+        desc: language === "hi" ? "फसल सुरक्षा और योजना के लिए लाइव मौसम और साप्ताहिक कृषि पूर्वानुमान।" : "Monitor temperature, moisture, and wind speed details mapped for agricultural use.",
+        icon: "🌤️"
+      }
+    ];
+
+    return (
+      <div className="dashboard-home">
+        {/* Hero Welcome */}
+        <div className="dashboard-hero">
+          <div className="hero-content">
+            <span className="hero-badge">🌱 {t("mandiIntelligence", language)}</span>
+            <h1 className="hero-title">
+              {language === "hi" ? "कृषि मंडी एवं सलाहकार पोर्टल" : "Agricultural Mandi & Advisory Portal"}
+            </h1>
+            <p className="hero-subtitle">
+              {language === "hi" 
+                ? "वास्तविक समय के मंडी भाव, मौसम की जानकारी और एआई-संचालित विशेषज्ञ कृषि सलाह — सब कुछ एक स्थान पर।"
+                : "Real-time crop prices, granular weather metrics, and AI-driven agronomy advisory — all integrated in one place."}
+            </p>
+          </div>
+          <div className="hero-bg-shapes">
+            <div className="shape shape-1" />
+            <div className="shape shape-2" />
+          </div>
         </div>
-      </div>
-      <h2 className="empty-title">
-        {crop 
-          ? (language === "hi" ? `${formatBilingualText(crop.name, language, "crop")} भाव देखने के लिए तैयार` : `Ready to fetch ${crop.name} prices`)
-          : (language === "hi" ? "शुरू करने के लिए एक फसल चुनें" : "Select a crop to begin")}
-      </h2>
-      <p className="empty-sub">
-        {crop
-          ? (language === "hi" ? "कोई राज्य (या अखिल भारतीय) चुनें और लाइव मंडी डेटा देखने के लिए 'भाव देखें' पर क्लिक करें।" : `Choose a state (or All India) and click "Get Prices" to see live mandi data.`)
-          : (language === "hi" ? "साइडबार से कोई भी फसल चुनें — अनाज, सब्जियां, फल और बहुत कुछ।" : "Pick any crop from the sidebar — cereals, vegetables, fruits, and more.")}
-      </p>
-      {!crop && (
-        <div className="empty-categories">
-          {(language === "hi" 
-            ? ["🌾 अनाज", "🥬 सब्जियां", "🍌 फल", "🌻 तिलहन", "🫘 दालें", "🌶️ मसाले"] 
-            : ["🌾 Cereals", "🥬 Vegetables", "🍌 Fruits", "🌻 Oilseeds", "🫘 Pulses", "🌶️ Spices"]
-          ).map((c) => (
-            <span key={c} className="empty-category-chip">
-              {c}
-            </span>
+
+        {/* Stats Summary Bar */}
+        <div className="dashboard-stats-grid">
+          {stats.map((s, idx) => (
+            <div key={idx} className="dashboard-stat-card">
+              <span className="dstat-icon">{s.icon}</span>
+              <div>
+                <h3 className="dstat-num">{s.num}</h3>
+                <p className="dstat-label">{s.label}</p>
+              </div>
+            </div>
           ))}
         </div>
+
+        {/* Popular Crops Grid */}
+        <div className="quick-start-section">
+          <h2 className="section-title">
+            {language === "hi" ? "त्वरित पहुँच: एक फसल चुनें" : "Quick Start: Select a Crop"}
+          </h2>
+          <p className="section-subtitle">
+            {language === "hi"
+              ? "साइडबार के बिना सीधे मंडी भाव और फसल जानकारी देखने के लिए नीचे दी गई किसी भी फसल पर क्लिक करें:"
+              : "Click on any crop below to instantly view its live prices, advisor panel, and agricultural metrics:"}
+          </p>
+          <div className="crops-grid">
+            {popularCrops.map((c) => (
+              <button
+                key={c.name}
+                className="crop-quick-card"
+                onClick={() => onCropSelect(c)}
+              >
+                <span className="crop-quick-icon">{c.icon}</span>
+                <span className="crop-quick-name">
+                  {formatBilingualText(c.name, language, "crop")}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Features Info Section */}
+        <div className="features-section">
+          <h2 className="section-title">
+            {language === "hi" ? "मंच की मुख्य विशेषताएं" : "Core Platform Features"}
+          </h2>
+          <div className="features-grid">
+            {features.map((f, idx) => (
+              <div key={idx} className="feature-card">
+                <span className="feature-icon">{f.icon}</span>
+                <h3 className="feature-card-title">{f.title}</h3>
+                <p className="feature-card-desc">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Crop Selected Ready-To-Fetch State
+  return (
+    <div className="crop-preview-container">
+      <div className="crop-preview-header">
+        <div className="crop-preview-badge-row">
+          <span className="crop-preview-category">
+            📂 {formatBilingualText(crop.category, language, "category")}
+          </span>
+          <span className="crop-preview-active-badge">
+            ⚡ {language === "hi" ? "चयनित" : "Selected"}
+          </span>
+        </div>
+        <div className="crop-preview-title-row">
+          <span className="crop-preview-icon">{crop.icon}</span>
+          <div>
+            <h2 className="crop-preview-name">{formatBilingualText(crop.name, language, "crop")}</h2>
+            <p className="crop-preview-season">🌾 {formatBilingualText(crop.season, language)}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="crop-profile-grid">
+        <div className="crop-profile-card">
+          <span className="prof-icon">🌡️</span>
+          <div className="prof-info">
+            <h4 className="prof-label">{t("temperature", language)}</h4>
+            <p className="prof-val">{formatBilingualText(crop.temp, language)}</p>
+          </div>
+        </div>
+
+        <div className="crop-profile-card">
+          <span className="prof-icon">⛰️</span>
+          <div className="prof-info">
+            <h4 className="prof-label">{t("soilType", language)}</h4>
+            <p className="prof-val">{formatBilingualText(crop.soil, language)}</p>
+          </div>
+        </div>
+
+        <div className="crop-profile-card">
+          <span className="prof-icon">💧</span>
+          <div className="prof-info">
+            <h4 className="prof-label">{t("waterNeeds", language)}</h4>
+            <p className="prof-val">{formatBilingualText(crop.water, language)}</p>
+          </div>
+        </div>
+
+        <div className="crop-profile-card">
+          <span className="prof-icon">📅</span>
+          <div className="prof-info">
+            <h4 className="prof-label">{t("harvestTime", language)}</h4>
+            <p className="prof-val">{formatBilingualText(crop.harvest, language)}</p>
+          </div>
+        </div>
+      </div>
+
+      {crop.states && (
+        <div className="crop-states-box">
+          <h4 className="states-title">🗺️ {t("majorStates", language)}</h4>
+          <p className="states-list">{formatBilingualText(crop.states, language, "state")}</p>
+        </div>
       )}
+
+      <div className="crop-action-cta">
+        <div className="cta-sparkle">🌾</div>
+        <div>
+          <h3 className="cta-title">
+            {language === "hi" 
+              ? `${formatBilingualText(crop.name, language, "crop")} के भाव देखने के लिए तैयार`
+              : `Ready to load ${crop.name} Mandi Rates`}
+          </h3>
+          <p className="cta-desc">
+            {language === "hi"
+              ? "ऊपर दिए गए नियंत्रणों से एक राज्य (या अखिल भारतीय) चुनें और लाइव मंडी डेटा देखने के लिए 'भाव देखें' पर क्लिक करें।"
+              : "Select a specific state (or keep 'All India') in the controls above and click 'Get Prices' to query live agriculture data."}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 // topbar.jsx
 import { STATES, AGRI_STATES } from "../constants/states";
 import { CROPS, CROP_CATEGORIES } from "../constants/crops";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "./Topbar.css";
 
 import { formatBilingualText, t } from "../utils/translations";
@@ -28,6 +28,13 @@ export default function Topbar({
 
   // ✅ No default category selected
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  // Sync category dropdown state when crop changes from outside
+  useEffect(() => {
+    if (selectedCrop && selectedCrop.category && selectedCategory !== selectedCrop.category) {
+      setSelectedCategory(selectedCrop.category);
+    }
+  }, [selectedCrop, selectedCategory]);
 
   // ✅ Show crops only after category selected
   const filteredCrops = useMemo(() => {
