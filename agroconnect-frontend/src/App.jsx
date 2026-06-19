@@ -366,11 +366,10 @@ function MainApp() {
               language={language}
             />
           )}
+          <Footer language={language} onTabChange={setActiveTab} />
         </main>
       </div>
     </div>
-
-    <Footer language={language} onTabChange={setActiveTab} />
     </>
   );
 }
