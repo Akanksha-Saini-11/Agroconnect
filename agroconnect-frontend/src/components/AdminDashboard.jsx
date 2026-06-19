@@ -3,6 +3,7 @@ import axios from "axios";
 import districts from "../constants/stateDistricts";
 import { CROPS } from "../constants/crops";
 import { t, formatBilingualText } from "../utils/translations";
+import Footer from "./Footer";
 import {
   BarChart,
   Bar,
@@ -739,6 +740,8 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      <Footer language={language} />
     </div>
   );
 }

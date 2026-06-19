@@ -5,6 +5,7 @@ import Topbar from "./components/Topbar";
 import PricePanel from "./components/PricePanel";
 import CropInfoPanel from "./components/CropInfoPanel";
 import AIAdvisor from "./components/AIAdvisor";
+import Footer from "./components/Footer";
 import { fetchPrices } from "./api/priceApi";
 import { getDistance, getDistrictCoords } from "./constants/districtCoords";
 import AdminDashboard from "./components/AdminDashboard";
@@ -358,6 +359,8 @@ function MainApp() {
             />
           )}
         </main>
+
+        <Footer language={language} onTabChange={setActiveTab} />
       </div>
     </div>
   );
