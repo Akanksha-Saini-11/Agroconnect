@@ -5,7 +5,8 @@
   padding: 64px var(--space-xl) 32px;
   color: var(--text-secondary);
   position: relative;
-  width: 100%;
+  margin-left: var(--sidebar-offset, 0px);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .footer-container {

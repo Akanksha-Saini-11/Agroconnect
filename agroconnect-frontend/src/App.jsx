@@ -79,6 +79,13 @@ function MainApp() {
       setSidebarOpen(false);
     }
 
+    // Scroll main body and window back to top smoothly
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const appBody = document.querySelector(".app-body");
+    if (appBody) {
+      appBody.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     setTimeout(handleFetchPrices, 50);
   };
 
