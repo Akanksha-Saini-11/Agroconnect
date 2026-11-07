@@ -9,7 +9,7 @@ import "./AIAdvisor.css";
 export default function AIAdvisor({ crop, weather, state, prices, bestMandi, language }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [lzoading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const chatAreaRef = useRef(null);
   const inputRef = useRef(null);
