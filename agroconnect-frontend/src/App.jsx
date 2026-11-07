@@ -10,6 +10,7 @@ import { fetchPrices } from "./api/priceApi";
 import { getDistance, getDistrictCoords } from "./constants/districtCoords";
 import AdminDashboard from "./components/AdminDashboard";
 import { t, formatBilingualText } from "./utils/translations";
+import { CROPS } from "./constants/crops";
 import "./App.css";
 import "./components/EmptyState.css";
 
@@ -67,7 +68,10 @@ function MainApp() {
   }, [selectedCrop, selectedState]); 
 
   const handleCropSelect = (crop) => {
-    setSelectedCrop(crop);
+    const fullCrop = crop
+      ? CROPS.find((c) => c.name === crop.name || c.apiName === crop.apiName) || crop
+      : null;
+    setSelectedCrop(fullCrop);
     setPrices([]);
     setBestMandi(null);
     setError("");
@@ -275,6 +279,15 @@ function MainApp() {
     }
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const appBody = document.querySelector(".app-body");
+    if (appBody) {
+      appBody.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const hasResults = prices.length > 0;
 
   return (
@@ -302,7 +315,7 @@ function MainApp() {
           onFetchPrices={handleFetchPrices}
           loading={loading}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
           hasResults={hasResults}
           onLocate={handleToggleNearby}
           locating={locating}
@@ -366,7 +379,7 @@ function MainApp() {
               language={language}
             />
           )}
-          <Footer language={language} onTabChange={setActiveTab} />
+          <Footer language={language} onTabChange={handleTabChange} />
         </main>
       </div>
     </div>
@@ -401,20 +414,11 @@ function LoadingState({ language }) {
 
 function EmptyState({ crop, language, onCropSelect }) {
   if (!crop) {
-    const popularCrops = [
-      { name: "Wheat", icon: "🌾", apiName: "Wheat", category: "Cereals & Millets" },
-      { name: "Rice", icon: "🍚", apiName: "Rice", category: "Cereals & Millets" },
-      { name: "Paddy", icon: "🌿", apiName: "Paddy(Common)", category: "Cereals & Millets" },
-      { name: "Potato", icon: "🥔", apiName: "Potato", category: "Vegetables" },
-      { name: "Tomato", icon: "🍅", apiName: "Tomato", category: "Vegetables" },
-      { name: "Onion", icon: "🧅", apiName: "Onion", category: "Vegetables" },
-      { name: "Mustard", icon: "🌻", apiName: "Mustard", category: "Oilseeds" },
-      { name: "Garlic", icon: "🧄", apiName: "Garlic", category: "Vegetables" },
-      { name: "Chickpea", icon: "🫘", apiName: "Gram", category: "Pulses" },
-      { name: "Mango", icon: "🥭", apiName: "Mango", category: "Fruits" },
-      { name: "Cotton", icon: "☁️", apiName: "Cotton", category: "Cash Crops" },
-      { name: "Sugarcane", icon: "🎋", apiName: "Sugarcane", category: "Cash Crops" },
+    const popularNames = [
+      "Wheat", "Rice", "Paddy", "Potato", "Tomato", "Onion",
+      "Mustard", "Garlic", "Chickpea", "Mango", "Cotton", "Sugarcane"
     ];
+    const popularCrops = CROPS.filter((c) => popularNames.includes(c.name));
 
     const stats = [
       { num: "500+", label: language === "hi" ? "सक्रिय मंडियां" : "Active Mandis", icon: "🏢" },
@@ -551,7 +555,7 @@ function EmptyState({ crop, language, onCropSelect }) {
           <span className="prof-icon">🌡️</span>
           <div className="prof-info">
             <h4 className="prof-label">{t("temperature", language)}</h4>
-            <p className="prof-val">{formatBilingualText(crop.temp, language)}</p>
+            <p className="prof-val">{formatBilingualText(crop.temp, language) || "15–30°C"}</p>
           </div>
         </div>
 
@@ -559,7 +563,7 @@ function EmptyState({ crop, language, onCropSelect }) {
           <span className="prof-icon">⛰️</span>
           <div className="prof-info">
             <h4 className="prof-label">{t("soilType", language)}</h4>
-            <p className="prof-val">{formatBilingualText(crop.soil, language)}</p>
+            <p className="prof-val">{formatBilingualText(crop.soil, language) || "Loamy, well-drained"}</p>
           </div>
         </div>
 
@@ -567,7 +571,7 @@ function EmptyState({ crop, language, onCropSelect }) {
           <span className="prof-icon">💧</span>
           <div className="prof-info">
             <h4 className="prof-label">{t("waterNeeds", language)}</h4>
-            <p className="prof-val">{formatBilingualText(crop.water, language)}</p>
+            <p className="prof-val">{formatBilingualText(crop.water, language) || "Moderate"}</p>
           </div>
         </div>
 
@@ -575,7 +579,7 @@ function EmptyState({ crop, language, onCropSelect }) {
           <span className="prof-icon">📅</span>
           <div className="prof-info">
             <h4 className="prof-label">{t("harvestTime", language)}</h4>
-            <p className="prof-val">{formatBilingualText(crop.harvest, language)}</p>
+            <p className="prof-val">{formatBilingualText(crop.harvest, language) || "Seasonal"}</p>
           </div>
         </div>
       </div>

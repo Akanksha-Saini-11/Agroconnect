@@ -53,34 +53,54 @@ router.post("/", async (req, res) => {
 
   const systemPrompt = buildSystemPrompt(context || {});
 
-  try {
-    const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        model: "llama-3.1-8b-instant",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages, // full conversation history
-        ],
-        max_tokens: 400,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json",
+  const MODELS = [
+    "qwen/qwen3.8-27b",
+    "allam-2-7b",
+    "openai/gpt-oss-20b"
+  ];
+
+  let reply = null;
+  let lastError = null;
+
+  for (const model of MODELS) {
+    try {
+      console.log(`🤖 Attempting AI response using model '${model}'...`);
+      const response = await axios.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          model,
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...messages,
+          ],
+          max_tokens: 450,
+          temperature: 0.7,
         },
-        timeout: 15000,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 12000,
+        }
+      );
+
+      reply = response.data.choices?.[0]?.message?.content;
+      if (reply) {
+        console.log(`✅ AI Response successfully generated with '${model}'`);
+        return res.json({ success: true, reply, model });
       }
-    );
-
-    const reply = response.data.choices?.[0]?.message?.content || "Sorry, I could not generate a response.";
-    res.json({ success: true, reply });
-
-  } catch (error) {
-    console.error("AI chat error:", error.response?.data || error.message);
-    res.status(500).json({ success: false, message: "Could not get AI response" });
+    } catch (err) {
+      lastError = err.response?.data?.error?.message || err.message;
+      console.warn(`⚠️ Model '${model}' failed: ${lastError}. Retrying next model...`);
+    }
   }
+
+  console.error("❌ All AI models failed:", lastError);
+  res.status(500).json({
+    success: false,
+    message: "Could not get AI response. Please try again in a moment.",
+  });
 });
 
 export default router;

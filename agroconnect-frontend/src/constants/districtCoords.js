@@ -55,27 +55,84 @@ const DISTRICT_COORDS = {
   "Aligarh": { lat: 27.8974, lon: 78.0880 },
   "Allahabad": { lat: 25.4358, lon: 81.8463 },
   "Prayagraj": { lat: 25.4358, lon: 81.8463 },
+  "Ambedkar Nagar": { lat: 26.4409, lon: 82.6830 },
+  "Amethi": { lat: 26.1582, lon: 81.8130 },
+  "Amroha": { lat: 28.9044, lon: 78.4678 },
+  "Auraiya": { lat: 26.4667, lon: 79.5167 },
+  "Ayodhya": { lat: 26.7922, lon: 82.1998 },
+  "Faizabad": { lat: 26.7922, lon: 82.1998 },
+  "Azamgarh": { lat: 26.0738, lon: 83.1859 },
+  "Baghpat": { lat: 28.9458, lon: 77.2255 },
+  "Bahraich": { lat: 27.5744, lon: 81.5977 },
+  "Ballia": { lat: 25.7597, lon: 84.1483 },
+  "Balrampur": { lat: 27.4300, lon: 82.1800 },
+  "Banda": { lat: 25.4754, lon: 80.3346 },
+  "Barabanki": { lat: 26.9268, lon: 81.1834 },
   "Bareilly": { lat: 28.3670, lon: 79.4304 },
+  "Basti": { lat: 26.7989, lon: 82.7486 },
+  "Bhadohi": { lat: 25.3946, lon: 82.5706 },
+  "Bijnor": { lat: 29.3724, lon: 78.1358 },
+  "Budaun": { lat: 28.0344, lon: 79.1256 },
+  "Bulandshahr": { lat: 28.4068, lon: 77.8498 },
+  "Chandauli": { lat: 25.2638, lon: 83.2676 },
+  "Chitrakoot": { lat: 25.1764, lon: 80.8665 },
+  "Deoria": { lat: 26.5024, lon: 83.7794 },
+  "Etah": { lat: 27.5583, lon: 78.6653 },
+  "Etawah": { lat: 26.7814, lon: 79.0217 },
+  "Farrukhabad": { lat: 27.3828, lon: 79.5847 },
+  "Fatehpur": { lat: 25.9300, lon: 80.8100 },
+  "Firozabad": { lat: 27.1591, lon: 78.3957 },
+  "Gautam Buddha Nagar": { lat: 28.5355, lon: 77.3910 },
+  "Noida": { lat: 28.5355, lon: 77.3910 },
+  "Ghaziabad": { lat: 28.6692, lon: 77.4538 },
+  "Ghazipur": { lat: 25.5804, lon: 83.5772 },
+  "Gonda": { lat: 27.1309, lon: 81.9619 },
   "Gorakhpur": { lat: 26.7606, lon: 83.3732 },
+  "Hamirpur": { lat: 25.9547, lon: 80.1539 },
+  "Hapur": { lat: 28.7305, lon: 77.7761 },
+  "Hardoi": { lat: 27.3948, lon: 80.1220 },
+  "Hathras": { lat: 27.5971, lon: 78.0531 },
+  "Jalaun": { lat: 25.9960, lon: 79.4520 },
+  "Orai": { lat: 25.9960, lon: 79.4520 },
+  "Kalpi": { lat: 26.1213, lon: 79.7344 },
+  "Jaunpur": { lat: 25.7464, lon: 82.6837 },
+  "Jhansi": { lat: 25.4484, lon: 78.5685 },
+  "Mauranipur": { lat: 25.2424, lon: 79.1486 },
+  "Kannauj": { lat: 27.0540, lon: 79.9130 },
   "Kanpur": { lat: 26.4499, lon: 80.3319 },
+  "Kanpur Dehat": { lat: 26.3606, lon: 79.8080 },
+  "Kasganj": { lat: 27.8084, lon: 78.6465 },
+  "Kaushambi": { lat: 25.5342, lon: 81.3800 },
+  "Kheri": { lat: 27.9487, lon: 80.7814 },
+  "Lakhimpur Kheri": { lat: 27.9487, lon: 80.7814 },
+  "Kushinagar": { lat: 26.7408, lon: 83.8887 },
+  "Lalitpur": { lat: 24.6869, lon: 78.4138 },
   "Lucknow": { lat: 26.8467, lon: 80.9462 },
+  "Maharajganj": { lat: 27.1442, lon: 83.5624 },
+  "Mahoba": { lat: 25.2933, lon: 79.8712 },
+  "Mainpuri": { lat: 27.2291, lon: 79.0248 },
   "Mathura": { lat: 27.4924, lon: 77.6737 },
+  "Mau": { lat: 25.9417, lon: 83.5611 },
   "Meerut": { lat: 28.9845, lon: 77.7064 },
-  "Varanasi": { lat: 25.3176, lon: 82.9739 },
+  "Mirzapur": { lat: 25.1460, lon: 82.5690 },
   "Moradabad": { lat: 28.8386, lon: 78.7733 },
   "Muzaffarnagar": { lat: 29.4727, lon: 77.7085 },
+  "Pilibhit": { lat: 28.6310, lon: 79.8043 },
+  "Pratapgarh": { lat: 25.8954, lon: 81.9472 },
+  "Raebareli": { lat: 26.2285, lon: 81.2384 },
+  "Rampur": { lat: 28.8154, lon: 79.0253 },
   "Saharanpur": { lat: 29.9680, lon: 77.5510 },
+  "Sambhal": { lat: 28.5833, lon: 78.5500 },
+  "Sant Kabir Nagar": { lat: 26.7820, lon: 83.0800 },
   "Shahjahanpur": { lat: 27.8833, lon: 79.9053 },
+  "Shamli": { lat: 29.4497, lon: 77.3117 },
+  "Shravasti": { lat: 27.7089, lon: 81.8436 },
+  "Siddharthnagar": { lat: 27.2750, lon: 82.8236 },
   "Sitapur": { lat: 27.5636, lon: 80.6814 },
-  "Lakhimpur Kheri": { lat: 27.9487, lon: 80.7814 },
-  "Hardoi": { lat: 27.3948, lon: 80.1220 },
+  "Sonbhadra": { lat: 24.6850, lon: 83.0678 },
+  "Sultanpur": { lat: 26.2648, lon: 82.0727 },
   "Unnao": { lat: 26.5444, lon: 80.4897 },
-  "Etawah": { lat: 26.7814, lon: 79.0217 },
-  "Mainpuri": { lat: 27.2291, lon: 79.0248 },
-  "Firozabad": { lat: 27.1591, lon: 78.3957 },
-  "Bulandshahr": { lat: 28.4068, lon: 77.8498 },
-  "Hapur": { lat: 28.7305, lon: 77.7761 },
-  "Ghaziabad": { lat: 28.6692, lon: 77.4538 },
+  "Varanasi": { lat: 25.3176, lon: 82.9739 },
 
   // Madhya Pradesh
   "Bhopal": { lat: 23.2599, lon: 77.4126 },
@@ -178,7 +235,7 @@ const DISTRICT_COORDS = {
   "Jhalawar": { lat: 24.5987, lon: 76.1651 },
   "Udaipur": { lat: 24.5854, lon: 73.7125 },
   "Rajsamand": { lat: 25.0712, lon: 73.8824 },
-  "Pratapgarh": { lat: 24.0320, lon: 74.7790 },
+  "Pratapgarh_RJ": { lat: 24.0320, lon: 74.7790 },
 
   // Gujarat
   "Ahmedabad": { lat: 23.0225, lon: 72.5714 },
@@ -406,7 +463,7 @@ const DISTRICT_COORDS = {
   "Kangra": { lat: 32.0998, lon: 76.2691 },
   "Solan": { lat: 30.9045, lon: 77.0967 },
   "Una": { lat: 31.4686, lon: 76.2694 },
-  "Hamirpur": { lat: 31.6864, lon: 76.5215 },
+  "Hamirpur_HP": { lat: 31.6864, lon: 76.5215 },
   "Bilaspur_HP": { lat: 31.3388, lon: 76.7599 },
   "Chamba": { lat: 32.5533, lon: 76.1258 },
   "Sirmaur": { lat: 30.5667, lon: 77.6667 },
@@ -478,7 +535,7 @@ const DISTRICT_COORDS = {
   "Mahasamund": { lat: 21.1100, lon: 82.0977 },
   "Dhamtari": { lat: 20.7111, lon: 81.5493 },
   "Surajpur": { lat: 23.2161, lon: 82.8706 },
-  "Balrampur": { lat: 23.0792, lon: 83.5978 },
+  "Balrampur_CG": { lat: 23.0792, lon: 83.5978 },
   "Koriya": { lat: 23.2615, lon: 82.4614 },
 };
 
@@ -504,17 +561,42 @@ export const getDistance = (lat1, lon1, lat2, lon2) => {
  */
 export const getDistrictCoords = (district) => {
   if (!district) return null;
-  // Try exact match first
-  if (DISTRICT_COORDS[district]) return DISTRICT_COORDS[district];
-  
-  // Try robust match (ignore case and punctuation)
-  const cleanStr = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const target = cleanStr(district);
-  
-  const key = Object.keys(DISTRICT_COORDS).find(
-    (k) => cleanStr(k) === target
-  );
-  return key ? DISTRICT_COORDS[key] : null;
+  const raw = String(district).trim();
+
+  // 1. Direct exact lookup
+  if (DISTRICT_COORDS[raw]) return DISTRICT_COORDS[raw];
+
+  // 2. Remove parenthetical info e.g. "Jalaun (Orai)" -> base: "Jalaun", bracket: "Orai"
+  const baseName = raw.replace(/\s*\(.*?\)\s*/g, "").trim();
+  const bracketText = (raw.match(/\((.*?)\)/)?.[1] || "").trim();
+
+  if (baseName && DISTRICT_COORDS[baseName]) return DISTRICT_COORDS[baseName];
+  if (bracketText && DISTRICT_COORDS[bracketText]) return DISTRICT_COORDS[bracketText];
+
+  // 3. Clean string normalizer (alphanumeric only)
+  const cleanStr = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const targetRaw = cleanStr(raw);
+  const targetBase = cleanStr(baseName);
+  const targetBracket = cleanStr(bracketText);
+
+  const keys = Object.keys(DISTRICT_COORDS);
+
+  for (const k of keys) {
+    const ck = cleanStr(k);
+    if (ck === targetRaw || ck === targetBase || (targetBracket && ck === targetBracket)) {
+      return DISTRICT_COORDS[k];
+    }
+  }
+
+  // 4. Substring / Word boundaries match
+  for (const k of keys) {
+    const ck = cleanStr(k);
+    if (ck.length >= 4 && (targetRaw.includes(ck) || targetBase.includes(ck) || ck.includes(targetBase))) {
+      return DISTRICT_COORDS[k];
+    }
+  }
+
+  return null;
 };
 
 export default DISTRICT_COORDS;

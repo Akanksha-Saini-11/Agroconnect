@@ -9,14 +9,28 @@ import "./AIAdvisor.css";
 export default function AIAdvisor({ crop, weather, state, prices, bestMandi, language }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [lzoading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const bottomRef = useRef(null);
+  const chatAreaRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Auto-scroll
+  // Scroll page to top on initial mount
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const appBody = document.querySelector(".app-body");
+    if (appBody) {
+      appBody.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
+
+  // Auto-scroll ONLY the internal chat area container when messages arrive
+  useEffect(() => {
+    if (chatAreaRef.current && (messages.length > 0 || loading)) {
+      chatAreaRef.current.scrollTo({
+        top: chatAreaRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [messages, loading]);
 
   // Suggested questions
@@ -201,7 +215,7 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi, lan
       </div>
 
       {/* Chat Area */}
-      <div className="chat-area">
+      <div className="chat-area" ref={chatAreaRef}>
         {messages.length === 0 && (
           <div className="chat-welcome">
             <div className="chat-welcome-icon">🌾</div>
@@ -270,8 +284,6 @@ export default function AIAdvisor({ crop, weather, state, prices, bestMandi, lan
             <span>⚠️</span> {error}
           </div>
         )}
-
-        <div ref={bottomRef} />
       </div>
 
       {/* Disclaimer */}

@@ -215,7 +215,7 @@ export default function PricePanel({
                   <div className="price-card-meta">
                     📍 {formatBilingualText(item.district, language)}, {formatBilingualText(item.state, language, "state")}
                     {item.variety ? ` · ${formatBilingualText(item.variety, language)}` : ""}
-                    {nearbyMode && item.distance != null && (
+                    {nearbyMode && item.distance != null && item.distance < 900000 && (
                       <span className="mandi-distance-tag">
                         {" "}· 🚀 {t("kmAway", language).replace("{dist}", item.distance)}
                       </span>
